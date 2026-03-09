@@ -494,12 +494,10 @@
 /mob/living/carbon/human/update_health_hud()
 	if(!hud_used)
 		return
-	PROFILE_TICK
 	if(dna.species.update_health_hud())
 		return
 	else
 		if(hud_used.bloods)
-			PROFILE_TICK
 			var/bloodloss = ((BLOOD_VOLUME_NORMAL - blood_volume) / BLOOD_VOLUME_NORMAL) * 100
 
 			var/toxloss = getToxLoss()
@@ -594,7 +592,6 @@
 				hud_used.healthdoll.icon_state = "healthdoll_DEAD"*/
 
 		if(hud_used.stamina)
-			PROFILE_TICK
 			if(stat != DEAD)
 				. = 1
 				if(stamina >= max_stamina)
@@ -620,7 +617,6 @@
 				else if(stamina >= 0)
 					hud_used.stamina.icon_state = "stam100"
 		if(hud_used.energy)
-			PROFILE_TICK
 			if(stat != DEAD)
 				. = 1
 				if(energy <= 0)
@@ -645,9 +641,6 @@
 					hud_used.energy.icon_state = "energy20"
 				else if(energy > 0)
 					hud_used.energy.icon_state = "energy10"
-		if(hud_used.zone_select)
-			PROFILE_TICK
-			hud_used.zone_select.update_zone_layers()
 
 /mob/living/carbon/human/fully_heal(admin_revive = FALSE, break_restraints = FALSE)
 	dna?.species.spec_fully_heal(src)
