@@ -492,12 +492,14 @@
 		hud_used.clock.update_icon()
 
 /mob/living/carbon/human/update_health_hud()
-	if(!client || !hud_used)
+	if(!hud_used)
 		return
+	PROFILE_TICK
 	if(dna.species.update_health_hud())
 		return
 	else
 		if(hud_used.bloods)
+			PROFILE_TICK
 			var/bloodloss = ((BLOOD_VOLUME_NORMAL - blood_volume) / BLOOD_VOLUME_NORMAL) * 100
 
 			var/toxloss = getToxLoss()
@@ -509,11 +511,12 @@
 			if(bloodloss > 0)
 				usedloss = bloodloss
 
-			hud_used.bloods.cut_overlays()
+			var/toxoverlay = null
+			var/oxyoverlay = null
+			var/painoverlay = null
 			if(usedloss <= 0)
 				hud_used.bloods.icon_state = "dam0"
 				if(toxloss > 0)
-					var/toxoverlay
 					switch(toxloss)
 						if(1 to 20)
 							toxoverlay = "toxloss20"
@@ -525,10 +528,8 @@
 							toxoverlay = "toxloss80"
 						if(100 to 999)
 							toxoverlay = "toxloss100"
-					hud_used.bloods.add_overlay(toxoverlay)
 
 				if(oxyloss > 0)
-					var/oxyoverlay
 					switch(oxyloss)
 						if(1 to 20)
 							oxyoverlay = "oxyloss20"
@@ -540,7 +541,6 @@
 							oxyoverlay = "oxyloss80"
 						if(100 to 999)
 							oxyoverlay = "oxyloss100"
-					hud_used.bloods.add_overlay(oxyoverlay)
 			else
 				var/used = round(usedloss, 10)
 				if(used <= 80)
@@ -548,7 +548,6 @@
 				else
 					hud_used.bloods.icon_state = "damelse"
 			if(painpercent > 0)
-				var/painoverlay
 				switch(painpercent)
 					if(1 to 29)
 						painoverlay = "painloss20"
@@ -560,7 +559,9 @@
 						painoverlay = "painloss80"
 					if(100 to 999)
 						painoverlay = "painloss100"
-				hud_used.bloods.add_overlay(painoverlay)
+			var/atom/movable/screen/healths/blood/blood_hud = hud_used.bloods
+			if(istype(blood_hud))
+				blood_hud.update_indicator_states(toxoverlay, oxyoverlay, painoverlay)
 
 /*		if(hud_used.healthdoll)
 			hud_used.healthdoll.cut_overlays()
@@ -593,6 +594,7 @@
 				hud_used.healthdoll.icon_state = "healthdoll_DEAD"*/
 
 		if(hud_used.stamina)
+			PROFILE_TICK
 			if(stat != DEAD)
 				. = 1
 				if(stamina >= max_stamina)
@@ -618,6 +620,7 @@
 				else if(stamina >= 0)
 					hud_used.stamina.icon_state = "stam100"
 		if(hud_used.energy)
+			PROFILE_TICK
 			if(stat != DEAD)
 				. = 1
 				if(energy <= 0)
@@ -642,6 +645,9 @@
 					hud_used.energy.icon_state = "energy20"
 				else if(energy > 0)
 					hud_used.energy.icon_state = "energy10"
+		if(hud_used.zone_select)
+			PROFILE_TICK
+			hud_used.zone_select.update_zone_layers()
 
 /mob/living/carbon/human/fully_heal(admin_revive = FALSE, break_restraints = FALSE)
 	dna?.species.spec_fully_heal(src)

@@ -7,6 +7,24 @@
 
 GLOBAL_LIST_EMPTY(stress_test_mobs)
 
+/datum/hud/stress_test
+	ui_style = 'icons/mob/roguehud.dmi'
+
+/datum/hud/stress_test/New(mob/living/carbon/human/owner)
+	..()
+	bloods = claim_screen(new /atom/movable/screen/healths/blood)
+	bloods.screen_loc = rogueui_blood
+	infodisplay += bloods
+	stamina = claim_screen(new /atom/movable/screen/stamina)
+	infodisplay += stamina
+	energy = claim_screen(new /atom/movable/screen/energy)
+	infodisplay += energy
+	zone_select = claim_screen(new /atom/movable/screen/zone_sel)
+	zone_select.icon = 'icons/mob/roguehud64.dmi'
+	zone_select.screen_loc = rogueui_targetdoll
+	static_inventory += zone_select
+	zone_select.update_zone_layers()
+
 /client/proc/performance_stress_test()
 	set name = "Performance Stress Test"
 	set category = "Debug"
@@ -19,6 +37,7 @@ GLOBAL_LIST_EMPTY(stress_test_mobs)
 		return
 
 	var/auto_cleanup = alert(usr, "Automatically delete mobs after test?", "Cleanup", "Yes", "No") == "Yes"
+	var/benchmark_huds = alert(usr, "Also benchmark the HUD refresh path (blood/stamina/energy/zone selector/highlight flashes)?", "HUD Benchmark", "Yes", "No") == "Yes"
 
 	var/radius = round(sqrt(mob_count) / 2) + 5
 	var/turf/center = get_turf(mob)
@@ -53,6 +72,8 @@ GLOBAL_LIST_EMPTY(stress_test_mobs)
 			H.update_hair()
 
 			equip_stress_test_clothing(H)
+			if(benchmark_huds)
+				H.hud_used = new /datum/hud/stress_test(H)
 
 			apply_random_damage_state(H)
 
@@ -63,11 +84,11 @@ GLOBAL_LIST_EMPTY(stress_test_mobs)
 
 	var/spawn_time = world.timeofday - start_time
 	to_chat(src, span_notice("Spawned [length(spawned_mobs)] mobs in [spawn_time/10] seconds."))
-	to_chat(src, span_notice("Beginning damage update cycles..."))
+	to_chat(src, span_notice("Beginning damage update cycles[benchmark_huds ? " with HUD refresh benchmarking" : ""]..."))
 
-	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 1), 5 SECONDS)
-	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 2), 15 SECONDS)
-	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 3), 30 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 1, benchmark_huds), 5 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 2, benchmark_huds), 15 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(stress_test_damage_wave), spawned_mobs, 3, benchmark_huds), 30 SECONDS)
 
 	if(auto_cleanup)
 		addtimer(CALLBACK(src, PROC_REF(stress_test_cleanup), spawned_mobs), 45 SECONDS)
@@ -75,7 +96,7 @@ GLOBAL_LIST_EMPTY(stress_test_mobs)
 		to_chat(src, span_warning("Test mobs will remain spawned. Use 'Cleanup Stress Test' verb to remove them later."))
 		GLOB.stress_test_mobs = spawned_mobs
 
-/client/proc/stress_test_damage_wave(list/mobs, wave_number)
+/client/proc/stress_test_damage_wave(list/mobs, wave_number, benchmark_huds = FALSE)
 	if(!mobs || !length(mobs))
 		return
 
@@ -100,6 +121,18 @@ GLOBAL_LIST_EMPTY(stress_test_mobs)
 
 	var/update_time = world.timeofday - start_time
 	to_chat(src, span_notice("Wave [wave_number] complete. Updated [length(mobs)] mobs in [update_time/10] seconds."))
+	if(benchmark_huds)
+		var/hud_start_time = world.timeofday
+		for(var/mob/living/carbon/human/H as anything in mobs)
+			if(QDELETED(H) || !H.hud_used)
+				continue
+			H.update_health_hud()
+			var/atom/movable/screen/zone_sel/zone_selector = H.hud_used.zone_select
+			if(istype(zone_selector) && length(H.bodyparts))
+				var/obj/item/bodypart/BP = pick(H.bodyparts)
+				zone_selector.flash_limb(BP.body_zone)
+		var/hud_update_time = world.timeofday - hud_start_time
+		to_chat(src, span_notice("Wave [wave_number] HUD refresh complete in [hud_update_time/10] seconds."))
 
 /client/proc/stress_test_cleanup(list/mobs)
 	if(!mobs)
