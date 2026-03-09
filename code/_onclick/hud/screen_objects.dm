@@ -1099,10 +1099,12 @@
 	var/overlay_icon = 'icons/mob/roguehud64.dmi'
 	var/list/atom/movable/screen/hud_component/layer/zone_overlay_slots
 	var/list/atom/movable/screen/hud_component/layer/highlight_slots
+	var/atom/movable/screen/hud_component/layer/hover_preview_layer
 	var/list/highlight_tokens
 	var/zone_overlay_count = 0
 	var/zone_overlay_cursor = 1
 	var/next_highlight_slot = 1
+	var/hovering_zone
 
 #define ZONE_SELECTOR_SLOT_COUNT 48
 #define ZONE_SELECTOR_HIGHLIGHT_SLOTS 4
@@ -1111,19 +1113,23 @@
 	. = ..()
 	zone_overlay_slots = create_hud_component_layer_pool(ZONE_SELECTOR_SLOT_COUNT, overlay_icon, 0.05)
 	highlight_slots = create_hud_component_layer_pool(ZONE_SELECTOR_HIGHLIGHT_SLOTS, overlay_icon, 0.9, 1)
+	hover_preview_layer = create_hud_component_layer(overlay_icon, null, 0.85)
 	highlight_tokens = list()
 	for(var/atom/movable/screen/hud_component/layer/slot as anything in zone_overlay_slots)
 		reset_hud_component_layer(slot)
 	for(var/atom/movable/screen/hud_component/layer/highlight as anything in highlight_slots)
 		reset_hud_component_layer(highlight)
+	reset_hud_component_layer(hover_preview_layer)
 	for(var/i in 1 to length(highlight_slots))
 		highlight_tokens += 0
 
 /atom/movable/screen/zone_sel/Destroy()
 	QDEL_LIST(zone_overlay_slots)
 	QDEL_LIST(highlight_slots)
+	QDEL_NULL(hover_preview_layer)
 	zone_overlay_slots = null
 	highlight_slots = null
+	hover_preview_layer = null
 	highlight_tokens = null
 	return ..()
 
@@ -1134,11 +1140,7 @@
 	var/list/PL = params2list(params)
 	var/icon_x = text2num(PL["icon-x"])
 	var/icon_y = text2num(PL["icon-y"])
-	var/choice = get_zone_at(icon_x, icon_y)
-	if(ismob(hud.mymob))
-		var/mob/M = hud.mymob
-		if(M.gender == FEMALE)
-			choice = get_zone_at(icon_x, icon_y, FEMALE)
+	var/choice = resolve_zone_choice(icon_x, icon_y)
 	if (!choice)
 		return 1
 
@@ -1147,6 +1149,48 @@
 		return H.check_limb_for_injuries(H, choice = check_zone(choice))
 	else
 		return set_selected_zone(choice, usr)
+
+/atom/movable/screen/zone_sel/MouseEntered(location, control, params)
+	. = ..()
+	MouseMove(location, control, params)
+
+/atom/movable/screen/zone_sel/MouseMove(location, control, params)
+	if(isobserver(usr))
+		return
+
+	var/list/PL = params2list(params)
+	var/icon_x = text2num(PL["icon-x"])
+	var/icon_y = text2num(PL["icon-y"])
+	update_hover_preview(resolve_zone_choice(icon_x, icon_y))
+
+/atom/movable/screen/zone_sel/MouseExited(location, control, params)
+	..()
+	update_hover_preview(null)
+
+/atom/movable/screen/zone_sel/proc/update_hover_preview(choice)
+	if(hovering_zone == choice)
+		return
+
+	hovering_zone = choice
+	if(!hover_preview_layer || !choice || !hud?.mymob)
+		reset_hud_component_layer(hover_preview_layer)
+		return
+
+	var/gender_prefix = hud.mymob.gender == FEMALE ? "f" : "m"
+	if(hover_preview_layer.icon != overlay_icon)
+		hover_preview_layer.icon = overlay_icon
+	hover_preview_layer.icon_state = "[gender_prefix]_[choice]"
+	hover_preview_layer.color = null
+	hover_preview_layer.alpha = 128
+	hover_preview_layer.layer = layer + 0.85
+
+/atom/movable/screen/zone_sel/proc/resolve_zone_choice(icon_x, icon_y)
+	var/gender = MALE
+	if(ismob(hud?.mymob))
+		var/mob/M = hud.mymob
+		if(M.gender == FEMALE)
+			gender = FEMALE
+	return get_zone_at(icon_x, icon_y, gender)
 
 /atom/movable/screen/zone_sel/proc/get_zone_at(icon_x, icon_y, gender = MALE)
 	if(gender == MALE)
