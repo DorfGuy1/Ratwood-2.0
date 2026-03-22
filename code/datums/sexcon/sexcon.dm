@@ -247,7 +247,7 @@
 	if(!(sigbitflags & SKIP_ADJACENCY_CHECK) && !user.sexcon.Adjacent_Or_Closet(target))
 		return FALSE
 
-	if(!self_target && !isnull(target.buckled) && istype(target.buckled, /obj/structure/bondage/gloryhole)) // gloryhole targets ignore the grab check
+	if(!self_target && !isnull(target.buckled) && istype(target.buckled, /obj/structure/bondage/gloryhole)) // gloryhole buckled mobs ignore tile/grab checks
 		sigbitflags |= (SKIP_GRAB_CHECK|SKIP_TILE_CHECK)
 		grabs = FALSE
 
