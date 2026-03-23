@@ -982,8 +982,11 @@
 			do_until_finished = !do_until_finished
 			update_exposure()
 		if("toggle_bottom_exposed")
-			bottom_exposed = !bottom_exposed
-			update_exposure()
+			if(user.incapacitated(ignore_restraints = TRUE))
+				to_chat(user, span_warning("I can't do that right now!"))
+			else
+				bottom_exposed = !bottom_exposed
+				update_exposure()
 		if("set_arousal")
 			var/amount = input(user, "Value above 120 will immediately cause orgasm!", "Set Arousal", arousal) as num
 			if(aphrodisiac > 1 && amount > 0)
