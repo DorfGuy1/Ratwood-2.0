@@ -62,7 +62,7 @@
 	subclass_languages = list(/datum/language/grenzelhoftian)
 	category_tags = list(CTAG_CHAPLAIN)
 	subclass_stats = list(
-		STATKEY_INT = 4,//court knowledge
+		STATKEY_INT = 3,//court knowledge
 		STATKEY_WIL = 1,
 		STATKEY_PER = 2//eye for intrigue
 	)
