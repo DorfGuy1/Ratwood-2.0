@@ -12,7 +12,7 @@
 	spawn_positions = 1
 
 	allowed_races = ACCEPTED_RACES
-	allowed_patrons = ALL_DIVINE_PATRONS
+	allowed_patrons = COURTCHAPLAIN_PATRONS
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/chaplain
 	tutorial = "ASSIST THE DUKE WITH SPIRITUAL MATTERS! Liase between CHURCH and COURT. But where do your TRUE loyalties lie... with the CHURCH? Or... with the COURT?! Others whisper in hushed tones... are you a TRAITOR..? A SPY? When swords are drawn, WHOSE SIDE WILL YOU BE ON?!!! (CHANGE THIS LATER)"
