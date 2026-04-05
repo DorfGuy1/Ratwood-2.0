@@ -214,12 +214,14 @@
 		if(prob(ruin_chance))
 			user.visible_message(span_warning("[user] loses control of the clay on the wheel — it collapses!"), span_warning("I lose control of the spinning clay — it collapses and is ruined!"))
 			playsound(src, 'modular/Neu_Food/sound/kneading.ogg', 80, TRUE)
+			new /obj/item/natural/clay(get_turf(src))
 			qdel(loaded_clay)
 			loaded_clay = null
 			reset_shaping_progress()
 			update_icon()
 			if(user.mind)
-				user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 2, FALSE)
+				var/fail_xp = istype(selected_recipe, /datum/pottery_wheel_recipe/porcelain) ? 12 : 7
+				user.mind.add_sleep_experience(/datum/skill/craft/ceramics, fail_xp, FALSE)
 			return
 
 	spin_progress++
@@ -237,16 +239,13 @@
 			clay_item.creator_skill = skill_level
 			clay_item.pottery_quality = calculate_pottery_quality(skill_level)
 	user.visible_message(span_notice("[user] shapes [loaded_clay] into [selected_recipe.name]."), span_notice("I shape [loaded_clay] into [selected_recipe.name]."))
-	var/final_craftdiff = selected_recipe.craftdiff
 	qdel(loaded_clay)
 	loaded_clay = null
 	reset_shaping_progress()
 	update_icon()
 
 	if(user.mind)
-		var/exp_gain = max(2, user.STAINT)
-		if(final_craftdiff > 0)
-			exp_gain += final_craftdiff * 4
+		var/exp_gain = istype(selected_recipe, /datum/pottery_wheel_recipe/porcelain) ? 25 : 15
 		user.mind.add_sleep_experience(/datum/skill/craft/ceramics, exp_gain, FALSE)
 
 
@@ -279,31 +278,45 @@
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/cup
-	name = "clay canister"
+	name = "clay cup"
 	craftdiff = 0
 	base_time = 30
 	result_type = /obj/item/natural/clay/claycup
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/canister
+	name = "clay canister"
+	craftdiff = 0
+	base_time = 30
+	result_type = /obj/item/natural/clay/claycupclassic
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/mug
+	name = "clay mug"
+	craftdiff = 0
+	base_time = 35
+	result_type = /obj/item/natural/clay/claymug
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/bottle
 	name = "clay bottle"
 	craftdiff = 0
 	base_time = 35
-	result_type = /obj/item/natural/clay/claybottle
+	result_type = /obj/item/natural/clay/claybottleclassic
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/vase
 	name = "clay vase"
 	craftdiff = 0
 	base_time = 40
-	result_type = /obj/item/natural/clay/clayvase
+	result_type = /obj/item/natural/clay/clayvaseclassic
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/fancy_vase
 	name = "fancy clay vase"
 	craftdiff = 0
 	base_time = 45
-	result_type = /obj/item/natural/clay/clayfancyvase
+	result_type = /obj/item/natural/clay/clayfancyvaseclassic
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/teapot
@@ -318,6 +331,34 @@
 	craftdiff = 0
 	base_time = 35
 	result_type = /obj/item/natural/clay/rawteacup
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/bowl
+	name = "clay bowl"
+	craftdiff = 0
+	base_time = 30
+	result_type = /obj/item/natural/clay/claybowl
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/fork
+	name = "clay fork"
+	craftdiff = 0
+	base_time = 25
+	result_type = /obj/item/natural/clay/clayfork
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/blowing_pipe
+	name = "blowing pipe"
+	craftdiff = 0
+	base_time = 35
+	result_type = /obj/item/natural/clay/rawblowrod
+	required_clay_type = /obj/item/natural/clay/kneaded
+
+/datum/pottery_wheel_recipe/basic/dildo
+	name = "clay dildo"
+	craftdiff = 0
+	base_time = 35
+	result_type = /obj/item/natural/clay/rawdildo
 	required_clay_type = /obj/item/natural/clay/kneaded
 
 /datum/pottery_wheel_recipe/basic/statue_1
@@ -407,6 +448,14 @@
 	name = "porcelain teacup"
 	result_type = /obj/item/natural/clay/porcelain/cup
 
+/datum/pottery_wheel_recipe/porcelain/cup_alt
+	name = "porcelain cup"
+	result_type = /obj/item/natural/clay/porcelain/claycup
+
+/datum/pottery_wheel_recipe/porcelain/mug
+	name = "porcelain mug"
+	result_type = /obj/item/natural/clay/porcelain/mug
+
 /datum/pottery_wheel_recipe/porcelain/platter
 	name = "porcelain platter"
 	result_type = /obj/item/natural/clay/porcelain/platter
@@ -415,9 +464,28 @@
 	name = "porcelain teapot"
 	result_type = /obj/item/natural/clay/porcelain/teapot
 
+/datum/pottery_wheel_recipe/porcelain/bottle
+	name = "porcelain bottle"
+	base_time = 40
+	result_type = /obj/item/natural/clay/claybottle
+
+/datum/pottery_wheel_recipe/porcelain/sealvase
+	name = "porcelain vase (sealed)"
+	base_time = 45
+	result_type = /obj/item/natural/clay/clayvase
+
+/datum/pottery_wheel_recipe/porcelain/sealfancyvase
+	name = "fancy porcelain vase (sealed)"
+	base_time = 50
+	result_type = /obj/item/natural/clay/clayfancyvase
+
 /datum/pottery_wheel_recipe/porcelain/fancy_teapot
 	name = "fancy porcelain teapot"
 	result_type = /obj/item/natural/clay/porcelain/fancyteapot
+
+/datum/pottery_wheel_recipe/porcelain/dildo
+	name = "porcelain dildo"
+	result_type = /obj/item/natural/clay/porcelain/dildo
 
 /datum/pottery_wheel_recipe/porcelain/advanced
 	abstract_type = /datum/pottery_wheel_recipe/porcelain/advanced

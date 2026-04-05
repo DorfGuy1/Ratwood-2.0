@@ -25,6 +25,32 @@
 	var/sand_added = FALSE
 	var/is_wet = FALSE
 	var/needs_knead_after_wet = FALSE
+	var/list/special_glaze_result_types = null
+	var/list/special_glaze_icon_states = null
+	var/special_glaze_selected_type = null
+	var/special_glaze_default_type = null
+	var/needs_glaze_gold_dust = FALSE
+	var/has_glaze_gold_dust = FALSE
+
+/obj/item/natural/clay/proc/select_special_glaze(obj/item/dye_brush/brush, mob/living/user)
+	if(!special_glaze_result_types?.len || !special_glaze_icon_states?.len)
+		return FALSE
+	if(!brush?.dye)
+		to_chat(user, span_warning("The dye brush has no dye loaded."))
+		return TRUE
+	var/list/radial_choices = list()
+	for(var/choice_name in special_glaze_result_types)
+		var/choice_icon_state = special_glaze_icon_states[choice_name]
+		radial_choices[choice_name] = image(icon = icon, icon_state = choice_icon_state)
+	var/choice = show_radial_menu(user, src, radial_choices, require_near = TRUE, tooltips = TRUE)
+	if(!choice)
+		return TRUE
+	special_glaze_selected_type = special_glaze_result_types[choice]
+	has_glaze_gold_dust = FALSE
+	to_chat(user, span_notice("I prepare [src] for a [lowertext(choice)] finish."))
+	if(needs_glaze_gold_dust)
+		to_chat(user, span_warning("I need to add gold dust before baking, or it will bake into a regular porcelain finish."))
+	return TRUE
 
 /obj/item/natural/clay/proc/consume_wetting_water(obj/item/reagent_containers/container)
 	if(!container?.reagents)
@@ -59,6 +85,8 @@
 	if(!do_after(user, get_knead_time(user, 1.5 SECONDS), target = src))
 		return FALSE
 	needs_knead_after_wet = FALSE
+	if(user.mind)
+		user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 4, FALSE)
 	return TRUE
 
 /obj/item/natural/clay/kneaded
@@ -110,6 +138,25 @@
 	if(!user)
 		return ..()
 
+	if(istype(W, /obj/item/dye_brush))
+		var/obj/item/dye_brush/brush = W
+		if(select_special_glaze(brush, user))
+			return TRUE
+
+	if(istype(W, /obj/item/alch/golddust) && needs_glaze_gold_dust)
+		if(!special_glaze_selected_type)
+			to_chat(user, span_warning("I should choose a glaze style first."))
+			return TRUE
+		if(has_glaze_gold_dust)
+			to_chat(user, span_warning("This piece already has gold dust added."))
+			return TRUE
+		if(!do_after(user, 2 SECONDS, target = src))
+			return TRUE
+		has_glaze_gold_dust = TRUE
+		qdel(W)
+		to_chat(user, span_notice("I dust [src] with gold, ready for firing."))
+		return TRUE
+
 	var/found_table = locate(/obj/structure/table) in (loc)
 	var/obj/item/reagent_containers/water_container = W
 	if(istype(water_container) && !is_wet)
@@ -143,7 +190,7 @@
 		var/obj/item/natural/clay/kneaded/kneaded_clay = new(loc)
 		kneaded_clay.is_wet = FALSE
 		if(user.mind)
-			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 2, FALSE)
+			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 6, FALSE)
 		qdel(src)
 		return
 
@@ -179,7 +226,7 @@
 		needs_knead_after_wet = FALSE
 		qdel(W)
 		if(user.mind)
-			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 1, FALSE)
+			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 6, FALSE)
 		to_chat(user, span_notice("The clay now has [ash_kneads]/2 ash mixed in."))
 		if(ash_kneads >= 2 && sand_added)
 			var/obj/item/natural/clay/refined/refined_clay = new(loc)
@@ -215,7 +262,7 @@
 		needs_knead_after_wet = FALSE
 		qdel(W)
 		if(user.mind)
-			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 1, FALSE)
+			user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 6, FALSE)
 		if(ash_kneads >= 2)
 			if(is_stonedust)
 				var/obj/item/natural/clay/glassbatch/glass_batch = new(loc)
@@ -260,7 +307,15 @@
 			qdel(src)
 			return null
 		if(cooked_type)
-			result = new cooked_type(A)
+			var/target_cooked_type = cooked_type
+			if(special_glaze_selected_type)
+				if(needs_glaze_gold_dust && !has_glaze_gold_dust)
+					target_cooked_type = special_glaze_default_type || cooked_type
+					if(A)
+						A.visible_message(span_notice("[src] bakes without enough gold and settles into a standard finish."))
+				else
+					target_cooked_type = special_glaze_selected_type
+			result = new target_cooked_type(A)
 			apply_pottery_quality(result, pottery_quality, creator_skill)
 		return result
 	result = new /obj/item/ash(A) // No cooked_type? Pulverized.

@@ -625,13 +625,14 @@
 						if(pot.reagents.chem_temp < MIN_STEW_TEMPERATURE)
 							to_chat(user, span_notice("[pot] isn't boiling!</span>"))
 							return
+						var/effective_divisor = pot:has_lid ? cooktime_divisor * 2 : cooktime_divisor
 						if(do_after(user, 2 SECONDS / cooktime_divisor, target = src))
 							user.visible_message(span_info("[user] places [W] into the pot.</span>"))
 							add_sleep_experience(user, /datum/skill/craft/cooking, user.STAINT)
 							qdel(W)
 							playsound(src.loc, 'sound/items/Fish_out.ogg', 20, TRUE)
 							pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK)
-							sleep(R.cooktime / cooktime_divisor)
+							sleep(R.cooktime / effective_divisor)
 							playsound(src, "bubbles", 30, TRUE)
 							pot.reagents.remove_reagent(/datum/reagent/water, VOLUME_PER_STEW_COOK_AFTER) // Remove water first prevent overfill
 							pot.reagents.add_reagent(R.output, VOLUME_PER_STEW_COOK + VOLUME_PER_STEW_COOK_AFTER)
@@ -722,7 +723,11 @@
 					food = C
 		if(istype(attachment, /obj/item/reagent_containers/glass/bucket/pot))
 			if(attachment.reagents)
-				attachment.reagents.expose_temperature(400, 0.033)
+				var/heat_rate = 0.033
+				var/obj/item/reagent_containers/glass/bucket/pot/attached_pot = attachment
+				if(attached_pot.has_lid)
+					heat_rate = 0.05 // ~50% faster heating with lid on
+				attachment.reagents.expose_temperature(400, heat_rate)
 				if(attachment.reagents.chem_temp > MIN_STEW_TEMPERATURE)
 					boilloop.start()
 				else

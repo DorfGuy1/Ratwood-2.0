@@ -237,7 +237,8 @@
 			update_icon()
 			qdel(G)
 			if(user.mind)
-				user.mind.add_sleep_experience(/datum/skill/craft/ceramics, 2, FALSE)
+				var/fail_xp = ispath(G.selected_recipe.result_type, /obj/item/roguestatue) ? 7 : 2
+				user.mind.add_sleep_experience(/datum/skill/craft/ceramics, fail_xp, FALSE)
 			return
 
 	G.blow_progress++
@@ -245,7 +246,6 @@
 		to_chat(user, span_notice("The glass form is taking shape."))
 		return
 
-	var/final_craftdiff = G.selected_recipe.craftdiff
 	var/final_recipe_name = G.selected_recipe.name
 	var/turf/drop_turf = get_turf(user)
 	var/glass_quality_tier = calculate_glass_quality(skill_level)
@@ -260,9 +260,7 @@
 	qdel(G)
 
 	if(user.mind)
-		var/exp_gain = max(2, user.STAINT)
-		if(final_craftdiff > 0)
-			exp_gain += final_craftdiff * 4
+		var/exp_gain = ispath(G.selected_recipe.result_type, /obj/item/roguestatue) ? 15 : 5
 		user.mind.add_sleep_experience(/datum/skill/craft/ceramics, exp_gain, FALSE)
 
 
