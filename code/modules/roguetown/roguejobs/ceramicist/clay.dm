@@ -47,7 +47,7 @@
 	if(!choice)
 		return TRUE
 	special_glaze_selected_type = special_glaze_result_types[choice]
-	to_chat(user, span_notice("I prepare [src] for a [lowertext(choice)] finish."))
+	to_chat(user, span_notice("I prepare [src] for a [LOWER_TEXT(choice)] finish."))
 	if(needs_glaze_gold_dust && !has_glaze_gold_dust)
 		to_chat(user, span_warning("I need to add gold dust before baking, or it will bake into a regular porcelain finish."))
 	else if(needs_glaze_gold_dust && has_glaze_gold_dust)
