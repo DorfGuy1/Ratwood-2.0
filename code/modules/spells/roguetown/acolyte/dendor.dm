@@ -234,3 +234,79 @@
 		return TRUE
 	revert_cast()
 	return FALSE
+
+// --- T4 Miracle: Sanctify Tree -----------------------------------------------
+/obj/effect/proc_holder/spell/invoked/sanctify_tree
+	name = "Sanctify Tree"
+	desc = "Channel Dendor's most sacred blessing to consecrate a living, unburnt tree into a sanctified tree of the Treefather — a nexus of druidic power."
+	invocation_type = "shout"
+	overlay_state = "blesscrop"
+	range = 1
+	recharge_time = 60 SECONDS
+	associated_skill = /datum/skill/magic/holy
+	sound = 'sound/ambience/noises/mystical (4).ogg'
+	invocations = list("Treefather, consecrate this living tree into your eternal embrace!")
+	miracle = TRUE
+	devotion_cost = 50
+
+/obj/effect/proc_holder/spell/invoked/sanctify_tree/cast(list/targets, mob/living/user)
+	. = ..()
+
+	var/mob/living/carbon/human/H = user
+	if(!istype(H))
+		return FALSE
+
+	var/atom/target_atom = targets[1]
+	var/obj/structure/flora/newtree/target = null
+
+	if(istype(target_atom, /obj/structure/flora/newtree) \
+			&& !istype(target_atom, /obj/structure/flora/newtree/sanctified) \
+			&& !target_atom.burnt)
+		target = target_atom
+	else if(target_atom.loc && (get_dist(user, target_atom.loc) <= 1))
+		for(var/obj/structure/flora/newtree/NT in target_atom.loc)
+			if(!istype(NT, /obj/structure/flora/newtree/sanctified) && !NT.burnt)
+				target = NT
+				break
+
+	if(!target)
+		to_chat(H, span_warning("I must target a living tree directly adjacent to me. Old trees, burnt trees, wise trees, and already-sanctified trees cannot be consecrated."))
+		return FALSE
+
+	H.visible_message(
+		span_notice("[H] presses both hands to the bark of [target] and begins a long, reverent invocation."),
+		span_notice("I press my hands to the bark and channel the Treefather's blessing into the tree...")
+	)
+
+	if(!do_after(H, 10 SECONDS, target = target))
+		to_chat(H, span_warning("The consecration ritual was interrupted — the blessing fades & must be restarted."))
+		return FALSE
+
+	if(QDELETED(target) || target.burnt || istype(target, /obj/structure/flora/newtree/sanctified))
+		to_chat(H, span_warning("The tree is no longer a valid target for sanctification."))
+		return FALSE
+
+	var/turf/T = get_turf(target)
+
+	// Clean up branches and leaves from the old newtree.
+	// Mirrors the wise tree conversion in create_wise_tree.dm.
+	for(var/turf/adjacent in range(1, T))
+		for(var/obj/structure/flora/newbranch/B in adjacent)
+			qdel(B)
+		for(var/obj/structure/flora/newleaf/L in adjacent)
+			qdel(L)
+	var/turf/above = get_step_multiz(T, UP)
+	if(istype(above, /turf/open/transparent/openspace))
+		for(var/obj/structure/flora/newtree/upper_tree in above)
+			qdel(upper_tree)
+
+	qdel(target)
+
+	var/obj/structure/flora/roguetree/wise/sanctified/new_tree = new(T)
+	playsound(T, 'sound/ambience/noises/mystical (4).ogg', 70, TRUE)
+	H.visible_message(
+		span_green("[H]'s hands blaze with golden light as [new_tree] is consecrated and transfigured into a sanctified tree of Dendor!"),
+		span_notice("I feel the Treefather's power flow through me as [new_tree] is sanctified.")
+	)
+	SEND_SIGNAL(H, COMSIG_TREE_TRANSFORMED)
+	return TRUE

@@ -1264,6 +1264,7 @@
 #include "code\game\objects\structures\roguetown\meathook.dm"
 #include "code\game\objects\structures\roguetown\mushroom_circle.dm"
 #include "code\game\objects\structures\roguetown\musicbox.dm"
+#include "code\game\objects\structures\roguetown\sanctified_tree.dm"
 #include "code\game\objects\structures\roguetown\newtree.dm"
 #include "code\game\objects\structures\roguetown\portal.dm"
 #include "code\game\objects\structures\roguetown\redstone.dm"
