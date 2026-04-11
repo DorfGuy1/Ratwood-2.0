@@ -119,7 +119,7 @@
 /obj/effect/decal/remains/beetle
 	name = "beetle remains"
 	gender = PLURAL
-	icon_state = "beetle_remains" // Placeholder
+	icon_state = "rotten"
 	icon = 'icons/roguetown/mob/monster/beetle.dmi'
 
 // Beetle meat
