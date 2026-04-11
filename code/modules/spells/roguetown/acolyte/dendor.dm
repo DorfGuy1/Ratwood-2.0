@@ -530,6 +530,7 @@
 			span_notice("I feel the Treefather's power flow through me as [new_tree] is sanctified.")
 		)
 		SEND_SIGNAL(H, COMSIG_TREE_TRANSFORMED)
+		H.adjust_experience(/datum/skill/magic/druidic, 50, FALSE)
 		return TRUE
 
 	// ---- Wise tree → sanctified wise tree ----
@@ -548,6 +549,7 @@
 			span_notice("I feel the Treefather's power flow through me as the ancient tree is sanctified.")
 		)
 		SEND_SIGNAL(H, COMSIG_TREE_TRANSFORMED)
+		H.adjust_experience(/datum/skill/magic/druidic, 15, FALSE)
 		return TRUE
 
 	return FALSE
@@ -587,6 +589,10 @@
 	return ..()
 
 /obj/effect/proc_holder/spell/targeted/summon_lesser_dryad/cast(list/targets, mob/user = usr)
+	// Swap invocation text so the caster says the right chant for summon vs unsummon.
+	invocations = (conjured_dryad && !QDELETED(conjured_dryad)) \
+		? list("My protector, I send thee back to the grove!") \
+		: list("Treefather, lend me your guardian.")
 	. = ..()
 	if(!istype(user, /mob/living/carbon/human))
 		return FALSE
@@ -679,13 +685,16 @@
 	update_icon()
 
 /obj/effect/proc_holder/spell/targeted/lesser_dryad_special/InterceptClickOn(mob/living/caller, params, atom/target)
-	. = ..()
-	if(.)
-		return TRUE
+	// Turfs are not intercepted by the parent targeted-spell logic; handle them directly.
+	if(!isturf(target))
+		. = ..()
+		if(.)
+			return TRUE
 	if(!can_cast(caller) || !cast_check(FALSE, ranged_ability_user))
 		deactivate(caller)
 		return TRUE
-	perform(list(target), TRUE, user = ranged_ability_user)
+	// Always normalise to the turf so surging onto an empty tile works.
+	perform(list(get_turf(target) || target), TRUE, user = ranged_ability_user)
 	deactivate(caller)
 	return TRUE
 
@@ -799,11 +808,15 @@
 			D.ai_controller.clear_blackboard_key(BB_TRAVEL_DESTINATION)
 			D.ai_controller.clear_blackboard_key(BB_BASIC_MOB_RETALIATE_LIST)
 			D.ai_controller.set_blackboard_key(BB_BASIC_MOB_CURRENT_TARGET, A)
-		// Old-style AI: add target to enemies list and trigger retaliate
+		// Old-style AI: set the enemy directly and start movement toward them.
+		// Do NOT call Retaliate() here — it scans nearby mobs and would add the
+		// wrong targets to the enemies list, causing the dryad to attack a
+		// different mob than the one that was middle-clicked.
 		D.follow_target = null
 		D.aggressive = TRUE
 		D.enemies = list(A)
-		D.Retaliate()
+		D.LoseTarget()          // cancel current Goto so it re-paths toward A
+		D.Goto(get_turf(A), D.move_to_delay, 0)
 		if("neutral" in D.faction)
 			D.faction -= "neutral"
 		to_chat(src, span_notice("[D.name] charges at [A.name]!"))
@@ -815,4 +828,44 @@
 	if(try_handle_order_dryad(A))
 		return
 	return ..()
+
+//==============================================================================
+// Conjure Floral Seed — granted by Cat 10 Floral Conjuration ritual.
+// Instant-cast self spell. Prompts the caster to choose a bush or flower seed,
+// then places a conjured copy in their hand. Conjured seeds vanish if dropped.
+//==============================================================================
+/obj/effect/proc_holder/spell/self/conjure_floral_seed
+	name = "Conjure Floral Seed"
+	desc = "Conjure a flower or bush seed into your hand using Dendor's power. Seeds dissolve if dropped. Flower seeds can be changed in-hand to subtypes. 30 second cooldown."
+	overlay_state = "blesscrop"
+	action_icon_state = "blessing"
+	action_icon = 'icons/mob/actions/genericmiracles.dmi'
+	chargetime = 0 SECONDS
+	recharge_time = 30 SECONDS
+	associated_skill = /datum/skill/magic/druidic
+	invocations = list("From the deep soil, a fragile life springs! Treefather, grant me your seed.")
+	invocation_type = "whisper"
+
+/obj/effect/proc_holder/spell/self/conjure_floral_seed/cast(mob/user = usr)
+	. = ..()
+	if(!istype(user, /mob/living/carbon/human))
+		return
+	var/mob/living/carbon/human/H = user
+	var/list/options = list("Flower seeds", "Bush seed")
+	var/choice = input(H, "Which seed do you conjure?", "Conjure Floral Seed") as null|anything in options
+	if(isnull(choice) || QDELETED(H))
+		return
+	var/obj/item/seed
+	if(choice == "Bush seed")
+		seed = new /obj/item/seeds/bush/conjured(get_turf(H))
+	else
+		seed = new /obj/item/seeds/flower/conjured(get_turf(H))
+	if(!H.put_in_hands(seed))
+		// put_in_hands returns null/FALSE when both hands are full — seed lands at feet.
+		to_chat(H, span_warning("My hands are full — the conjured seed falls to my feet and dissolves!"))
+		// The conjured seed would qdel on Dropped, but it already spawned on floor:
+		// force it away since Dropped() only fires on hand-drop, not on initial spawn.
+		qdel(seed)
+		return
+	to_chat(H, span_notice("A [seed.name] materialises in my hand, thrumming with the Treefather's life."))
 

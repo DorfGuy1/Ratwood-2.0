@@ -440,9 +440,26 @@
 	seedling.configure_seedling(soil, icon, icon_state, flower_sprout_type, 5 MINUTES)
 	qdel(src)
 
-// -- Mushroom Fae Circle Spores ---------------------------
+// -- Conjured seed variants (granted by Conjure Floral Seed spell) ----------
+// These subtypes vanish the moment they leave the caster's inventory.
+
+/obj/item/seeds/bush/conjured
+	name = "conjured bush seed"
+	desc = "A bush seed called forth by the Treefather's will. It will vanish if dropped."
+
+/obj/item/seeds/bush/conjured/Dropped(mob/user, forced = FALSE)
+	qdel(src)
+
+/obj/item/seeds/flower/conjured
+	name = "conjured flower seeds"
+	desc = "Flower seeds called forth by the Treefather's will. They will vanish if dropped. Use in-hand to choose which flower to cultivate."
+
+/obj/item/seeds/flower/conjured/Dropped(mob/user, forced = FALSE)
+	qdel(src)
+
+// -- Mushroom Fey Circle Spores ---------------------------
 // Can only be planted in BLESSED soil. Seeds a mushroom sprout that blooms
-// into a full fae teleport circle after 5 minutes of growing.
+// into a full fey teleport circle after 5 minutes of growing.
 // Obtained as a reward from Sanctified Tree category 3 ritual.
 
 /obj/item/seeds/mushroom_fae

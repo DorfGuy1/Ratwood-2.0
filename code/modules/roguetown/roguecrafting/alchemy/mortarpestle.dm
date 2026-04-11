@@ -8,6 +8,31 @@
 	experimental_inhand = FALSE
 
 	grid_width = 32
+
+//==============================================================================
+// Druidic crafting recipes — appear under the "Druidic Trickery" tab in the
+// crafting window whenever the player has the required skill-level.
+//==============================================================================
+/datum/crafting_recipe/roguetown/druidic
+	abstract_type = /datum/crafting_recipe/roguetown/druidic
+	req_table = FALSE
+	always_availible = TRUE      // shows for anyone who has the ingredients; craftdiff gates who can actually make it
+	skillcraft = /datum/skill/magic/druidic
+	subtype_reqs = FALSE
+	verbage_simple = "prepare"
+	verbage = "prepares"
+	craftsound = 'sound/foley/mortarpestle.ogg'
+
+/datum/crafting_recipe/roguetown/druidic/blessedseedpowder
+	name = "blessed seed powder"
+	result = list(/obj/item/alch/blessedseedpowder)
+	reqs = list(
+		/obj/item/seeds/treesap = 1,
+		/datum/reagent/water/blessed = 10,
+	)
+	tools = list(/obj/item/pestle = 1)
+	craftdiff = SKILL_LEVEL_NOVICE
+	time = 2 SECONDS
 	grid_height = 64
 
 /obj/item/reagent_containers/glass/mortar

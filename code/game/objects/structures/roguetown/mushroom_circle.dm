@@ -1,7 +1,7 @@
-// Fae Mushroom Circle
+// Fey Mushroom Circle
 //
 // GROWTH CHAIN (fey circles only — base mushroom_circle is a plain map decoration):
-//   /obj/item/seeds/mushroom_fae  →  planted in blessed soil, watered once
+//   /obj/item/seeds/mushroom_fey  →  planted in blessed soil, watered once
 //   /obj/structure/mushroom_sprout (5 min)
 //   /obj/structure/mushroom_circle/fey (active portal, tinymushrooms sprite)
 //      ↓ 20 min without scissors maintenance
@@ -19,7 +19,7 @@
 GLOBAL_LIST_EMPTY(mushroom_circles)
 
 //==============================================================================
-// Mushroom Fae Sprout
+// Mushroom Fey Sprout
 //==============================================================================
 
 /obj/structure/mushroom_sprout
@@ -194,16 +194,16 @@ GLOBAL_LIST_EMPTY(mushroom_circles)
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(H.patron && H.patron.type == /datum/patron/divine/dendor)
-			if(H.get_skill_level(/datum/skill/magic/druidic) >= SKILL_LEVEL_APPRENTICE)
+			if(H.get_skill_level(/datum/skill/magic/druidic) >= SKILL_LEVEL_EXPERT)
 				. += span_notice("Hold my amulet of Dendor and press it on this circle to travel to another fey circle.")
 			else
 				. += span_warning("The fey's mysteries are beyond my current understanding — I need greater druidic training to commune with this circle.")
 
 /obj/structure/mushroom_circle/fey/attackby(obj/item/I, mob/living/user, params)
-	// Require at least apprentice Druidic Trickery to interact with fey circle mechanics.
+	// Require at least expert Druidic Trickery to interact with fey circle mechanics.
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
-		if(H.get_skill_level(/datum/skill/magic/druidic) < SKILL_LEVEL_APPRENTICE)
+		if(H.get_skill_level(/datum/skill/magic/druidic) < SKILL_LEVEL_EXPERT)
 			to_chat(user, span_warning("The fey magic in this circle is beyond my understanding — I need greater druidic training to commune with it."))
 			return
 

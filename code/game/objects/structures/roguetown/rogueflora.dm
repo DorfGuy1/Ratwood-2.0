@@ -123,6 +123,8 @@
 	// Evil trees cleansed by Dendor's blessing become sanctified, not merely regrown.
 	new /obj/structure/flora/roguetree/wise/sanctified(T)
 	qdel(src)
+	if(isliving(user))
+		user.adjust_experience(/datum/skill/magic/druidic, 15, FALSE)
 	return TRUE
 
 /obj/structure/flora/roguetree/wise
@@ -182,6 +184,8 @@
 	var/turf/T = get_turf(src)
 	new /obj/structure/flora/roguetree/wise/sanctified/wise(T)
 	qdel(src)
+	if(isliving(user))
+		user.adjust_experience(/datum/skill/magic/druidic, 15, FALSE)
 	return TRUE
 
 /obj/structure/flora/roguetree/wise/proc/notify_nearby_dendorites()

@@ -243,7 +243,7 @@
 	// No active ritual — show the category picker.
 	var/list/cat_opts = list()
 	var/list/cat_map = list()
-	for(var/cat in list("cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8"))
+	for(var/cat in list("cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8", "cat9", "cat10"))
 		var/cat_name = get_ritual_display_name(cat)
 		if(is_once_per_tree(cat) && (cat in tree_data.rituals_completed))
 			cat_opts["[cat_name] (completed)"] = null
@@ -257,6 +257,12 @@
 	if(!selected)
 		to_chat(user, span_info("That ritual has already been completed on this tree and cannot be repeated."))
 		return
+	// Cat9 requires Expert Druidic Trickery skill to initiate.
+	if(selected == "cat9" && istype(user, /mob/living/carbon/human))
+		var/mob/living/carbon/human/H9 = user
+		if(H9.get_skill_level(/datum/skill/magic/druidic) < SKILL_LEVEL_EXPERT)
+			to_chat(user, span_warning("The Harvest Bloomstone ritual demands Expert Druidic Trickery — the Treefather will not reveal this secret to one unprepared."))
+			return
 	if(!confirm_start_ritual(user, selected))
 		return
 	tree_data.active_ritual = selected
@@ -288,10 +294,12 @@
 		if("cat6") return "Nature's Temper"
 		if("cat7") return "Soulbind"
 		if("cat8") return "Nature's Union"
+		if("cat9") return "Harvest Bloomstone"
+		if("cat10") return "Floral Conjuration"
 	return "Unknown Ritual"
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/is_once_per_tree(category)
-	return (category in list("cat4", "cat5", "cat6", "cat7"))
+	return (category in list("cat4", "cat5", "cat6", "cat7", "cat9", "cat10"))
 
 /// Returns associative list of offering key -> required count for the given category.
 /obj/structure/flora/roguetree/wise/sanctified/proc/get_required_offerings(category)
@@ -304,6 +312,8 @@
 		if("cat6") return list("zizobane" = 5, "runed_artifact" = 2, "druid_armor" = 1, "volf_head" = 1, "spider_head" = 1, "tree_seed" = 1, "blessed_seed_powder" = 1, "holy_water_container" = 1)
 		if("cat7") return list("leechtick" = 1, "bones" = 4)
 		if("cat8") return list("wedding_flower" = 1)
+		if("cat9") return list("boulder_only" = 1, "magic_stone_10" = 1, "blessed_powder" = 5)
+		if("cat10") return list("flower_seed_offering" = 3, "manabloom_or_manacrystal" = 5)
 	return list()
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/get_offering_desc(key)
@@ -327,6 +337,10 @@
 		if("leechtick") return "Bloated leech tick"
 		if("bones") return "Bones"
 		if("wedding_flower") return "Eoran peace flower"
+		if("boulder_only") return "A large boulder"
+		if("magic_stone_10") return "An strong mystical stone (magic power of 10)"
+		if("blessed_powder") return "Blessed seed powder"
+		if("flower_seed_offering") return "Flower seeds packet"
 	return key
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/show_ritual_requirements(mob/living/user, category)
@@ -459,6 +473,19 @@
 			return istype(held, /obj/item/natural/bone) || istype(held, /obj/item/alch/bone)
 		if("wedding_flower")
 			return istype(held, /obj/item/clothing/head/peaceflower)
+		if("boulder_only")
+			return istype(held, /obj/item/natural/rock)
+		if("magic_stone_10")
+			if(!istype(held, /obj/item/natural/stone))
+				return FALSE
+			var/obj/item/natural/stone/stone = held
+			return stone.magic_power >= 10
+		if("blessed_powder")
+			// Exact type check — bloomstone is excluded intentionally.
+			return held.type == /obj/item/alch/blessedseedpowder
+		if("flower_seed_offering")
+			// Exact type — conjured flower seeds are excluded.
+			return held.type == /obj/item/seeds/flower
 	return FALSE
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/consume_offering(key, obj/item/held, mob/living/user)
@@ -480,6 +507,8 @@
 			qdel(held)
 		if("wedding_flower")
 			qdel(held)
+		if("boulder_only", "magic_stone_10", "blessed_powder", "flower_seed_offering")
+			qdel(held)
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/check_ritual_complete()
 	if(!tree_data?.active_ritual)
@@ -498,6 +527,9 @@
 		tree_data.rituals_completed |= cat
 	playsound(get_turf(src), 'sound/ambience/noises/mystical (4).ogg', 70, TRUE)
 	visible_message(span_green("The [src.name] blazes with golden light as [user.name] completes a sacred ritual!"))
+	// Award Druidic Trickery XP for completing a bounty ritual.
+	var/ritual_xp = (cat == "cat1") ? 2 : 10
+	user.adjust_experience(/datum/skill/magic/druidic, ritual_xp, FALSE)
 	switch(cat)
 		if("cat1") reward_cat1(user)
 		if("cat2") reward_cat2(user)
@@ -507,6 +539,8 @@
 		if("cat6") reward_cat6(user)
 		if("cat7") on_soulbind(user)
 		if("cat8") reward_cat8(user)
+		if("cat9") reward_cat9(user)
+		if("cat10") reward_cat10(user)
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/cancel_ritual(mob/living/user)
 	if(!tree_data?.active_ritual)
@@ -602,12 +636,12 @@
 			H.apply_status_effect(/datum/status_effect/buff/dendor_vigil)
 	to_chat(user, span_green("Kneestingers erupt in a ring — the Treefather's vigil strengthens his faithful."))
 
-/// Cat 3 — Fey Weaving: mushroom fae circle seed (repeatable).
-/// Offerings: 5 runed artifacts OR leyline shards. Reward: 1 mushroom_fae seed.
+/// Cat 3 — Fey Weaving: mushroom fey circle seed (repeatable).
+/// Offerings: 5 runed artifacts OR leyline shards. Reward: 1 mushroom_fey seed.
 /obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat3(mob/living/user)
 	var/turf/T = get_turf(user)
 	new /obj/item/seeds/mushroom_fae(T)
-	to_chat(user, span_green("A single handful of mushroom fae spores rises from the roots — the Treefather rewards patience."))
+	to_chat(user, span_green("A single handful of mushroom fey spores rises from the roots — the Treefather rewards patience."))
 
 /// Cat 4 — Treefather's Bulwark: slow aura + integrity boost (once per tree).
 /// Offerings: 5 enchanted stones (magic_power 5+) OR boulders.
@@ -658,7 +692,28 @@
 	tree_data.wedding_active = TRUE
 	tree_data.wedding_officiant_ckey = user.ckey
 	visible_message(span_green("A peace flower drifts to the roots of [src.name] — the blessings of Dendor and Eora are invoked. Two souls may now offer their bitten apple to be wed beneath this tree."))
-	to_chat(user, span_notice("The ceremony has begun. Both partners should bite the same apple once each, then hand it to the tree to be wed. The one handing the apple over will decide the last name."))
+	to_chat(user, span_notice("The ceremony has begun. Both partners should bite the same apple once each, then hand it to the tree to be wed. The one handing the apple over will decide the surname."))
+
+/// Cat 9 — Harvest Bloomstone: a 20-use blessed seed powder stone (once per tree).
+/// Offerings: 1 boulder + 1 enchanted stone (magic_power 10+) + 5 blessed seed powders.
+/// Requires Expert Druidic Trickery to initiate (gated in open_ritual_menu).
+/obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat9(mob/living/user)
+	var/turf/T = get_turf(user)
+	var/obj/item/alch/bloomstone/B = new(T)
+	user.put_in_hands(B)
+	to_chat(user, span_green("The tree's roots cradle a glowing stone — and the Harvest Bloomstone rises to my hand, brimming in energy with the Treefather's blessing."))
+
+/// Cat 10 — Floral Conjuration: grants the Conjure Floral Seed spell (once per tree).
+/// Offerings: 3 flower seeds + 5 mana blooms or crystalized mana.
+/obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat10(mob/living/user)
+	if(!istype(user, /mob/living/carbon/human))
+		to_chat(user, span_warning("Only a humanoid may receive the Treefather's floral gift."))
+		return
+	var/mob/living/carbon/human/H = user
+	if(!H.mind)
+		return
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/conjure_floral_seed)
+	to_chat(H, span_green("The knowledge of Floral Conjuration flows into my mind — I can call seeds forth with the Treefather's power."))
 
 //==============================================================================
 // Aura Procs

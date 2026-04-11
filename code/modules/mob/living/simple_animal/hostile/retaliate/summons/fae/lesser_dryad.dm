@@ -13,6 +13,7 @@
 	melee_damage_upper = 18
 	aggressive = FALSE
 	inherent_spells = list()
+	move_to_delay = 6 // parent dryad is 12; halved for double movement speed
 	/// Cooldown for the special attack (set by the trigger spell).
 	var/special_cd = 0
 	/// The conjuring player's ckey — used for faction tagging.
