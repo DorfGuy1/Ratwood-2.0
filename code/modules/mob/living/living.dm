@@ -136,10 +136,8 @@
 	if(now_pushing)
 		return TRUE
 
-	var/they_can_move = TRUE
 	if(isliving(M))
 		var/mob/living/L = M
-		they_can_move = L.mobility_flags & MOBILITY_MOVE
 
 		//Should stop you pushing a restrained person out of the way
 		if(L.pulledby && L.pulledby != src && L.pulledby != L && L.restrained())
@@ -156,53 +154,6 @@
 
 	if(moving_diagonally)//no mob swap during diagonal moves.
 		return TRUE
-
-	if(!M.buckled && !M.has_buckled_mobs())
-		var/mob_swap = FALSE
-		var/too_strong = (M.move_resist > move_force) //can't swap with immovable objects unless they help us
-		if(istype(M,/mob/living/simple_animal/hostile/retaliate))
-			if(!M:aggressive)
-				mob_swap = TRUE
-		if(!they_can_move) //we have to physically move them
-			if(!too_strong)
-				mob_swap = FALSE
-		else
-			//You can swap with the person you are dragging on grab intent, and restrained people in most cases
-			if(M.pulledby == src && !too_strong)
-				mob_swap = FALSE
-			else if(
-				!( HAS_TRAIT(M, TRAIT_NOMOBSWAP) || HAS_TRAIT(src, TRAIT_NOMOBSWAP) ) &&\
-				( (M.restrained() && !too_strong) ) &&\
-				( restrained() )
-				)
-				mob_swap = FALSE
-		if(mob_swap)
-			//switch our position with M
-			if(loc && !loc.Adjacent(M.loc))
-				return TRUE
-			now_pushing = 1
-			var/oldloc = loc
-			var/oldMloc = M.loc
-
-			var/M_passmob = (M.pass_flags & PASSMOB) // we give PASSMOB to both mobs to avoid bumping other mobs during swap.
-			var/src_passmob = (pass_flags & PASSMOB)
-			M.pass_flags |= PASSMOB
-			pass_flags |= PASSMOB
-
-			var/move_failed = FALSE
-			if(!M.Move(oldloc) || !Move(oldMloc))
-				M.forceMove(oldMloc)
-				forceMove(oldloc)
-				move_failed = TRUE
-			if(!src_passmob)
-				pass_flags &= ~PASSMOB
-			if(!M_passmob)
-				M.pass_flags &= ~PASSMOB
-
-			now_pushing = 0
-
-			if(!move_failed)
-				return TRUE
 
 	if(m_intent == MOVE_INTENT_RUN && dir == get_dir(src, M))
 		if(isliving(M))
@@ -493,11 +444,11 @@
 			var/used_limb = C.find_used_grab_limb(src)
 			O.name = "[C]'s [parse_zone(used_limb)]"
 			var/obj/item/bodypart/BP = C.get_bodypart(check_zone(used_limb))
-			C.grabbedby += O
+			LAZYADD(C.grabbedby, O)
 			O.grabbed = C
 			O.grabbee = src
 			O.limb_grabbed = BP
-			BP.grabbedby += O
+			LAZYADD(BP.grabbedby, O)
 			if(item_override)
 				O.sublimb_grabbed = item_override
 			else
@@ -1184,7 +1135,7 @@
 	set name = "Yield"
 	set category = "IC"
 	set hidden = 1
-	if(surrendering || stat)
+	if(surrendering || stat == DEAD)
 		return
 	if(!instant)
 		if(alert(src, "Do you yield?", "SURRENDER", "Yes", "No") == "No")
@@ -1420,6 +1371,9 @@
 			return
 		if(L.compliance || L.surrendering)
 			surrender_mod = 0.5
+		else if(HAS_TRAIT(L, TRAIT_NUDE_SLEEPER))
+			if(what.nudist_approved && L.IsSleeping())
+				surrender_mod = 0.5 // concession for letting nude sleepers wear certain items: people can swipe them fast
 
 	if(!who.Adjacent(src))
 		return
@@ -1683,7 +1637,7 @@
  */
 
 /mob/living/proc/on_fire_stack(seconds_per_tick, datum/status_effect/fire_handler/fire_stacks/fire_handler)
-	adjust_bodytemperature(((fire_handler.stacks * 12)) * 0.5 * seconds_per_tick)
+	adjust_bodytemperature(((fire_handler.stacks)) * 0.5 * seconds_per_tick)
 
 /**
  * Adjust the amount of fire stacks on a mob
@@ -2168,21 +2122,12 @@
 		visible_message(span_info("[src] looks up."))
 	var/turf/ceiling = get_step_multiz(src, UP)
 	var/turf/T = get_turf(src)
+	var/datum/controller/subsystem/ParticleWeather/PW = SSParticleWeather //used so we can see what's the weather outside
 	if(!ceiling) //We are at the highest z-level.
 		if(T.can_see_sky())
-			switch(GLOB.forecast)
-				if("prerain")
-					to_chat(src, span_warning("Dark clouds gather..."))
-					return
-				if("rain")
-					to_chat(src, span_warning("A wet wind blows."))
-					return
-				if("rainbow")
-					to_chat(src, span_notice("A beautiful rainbow!"))
-					return
-				if("fog")
-					to_chat(src, span_warning("I can't see anything, the fog has set in."))
-					return
+			if(PW.runningWeather)
+				to_chat(src, span_warning("[PW.runningWeather.warning_message]"))
+				return
 			to_chat(src, span_warning("There is nothing special to say about this weather."))
 			do_time_change()
 		return
@@ -2191,6 +2136,8 @@
 		return
 
 	if(T.can_see_sky())
+		if(PW.runningWeather)
+			to_chat(src, span_warning("[PW.runningWeather.warning_message]"))
 		do_time_change()
 
 	var/ttime = 10

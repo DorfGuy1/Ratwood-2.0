@@ -772,9 +772,10 @@
 /area/rogue/under/tomb/indoors/royal)
 "GY" = (
 /obj/machinery/light/rogue/wallfire/candle/weak/l,
+/mob/living/carbon/human/species/skeleton/npc/hardspread,
 /turf/open/floor/rogue/carpet/lord/left{
 	dir = 1
-	},skeleton/npc/hardspread
+	},
 /area/rogue/under/tomb/indoors/royal)
 "He" = (
 /obj/structure/closet/crate/chest/crate,
@@ -1175,7 +1176,8 @@
 "XK" = (
 /turf/open/floor/rogue/grass,
 /area/rogue/under/tomb/wilds)
-"XL" = (skeleton/npc/hardspread
+"XL" = (
+/mob/living/carbon/human/species/skeleton/npc/hardspread,
 /obj/item/roguebin/water,
 /turf/open/floor/rogue/tile,
 /area/rogue/under/tomb/indoors/royal)

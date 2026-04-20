@@ -9,12 +9,13 @@
 	possible_item_intents = list(INTENT_GENERIC)
 	force = 10
 	throwforce = 10
-	slot_flags = ITEM_SLOT_MOUTH|ITEM_SLOT_HIP|ITEM_SLOT_NECK|ITEM_SLOT_RING
+	slot_flags = ITEM_SLOT_MOUTH|ITEM_SLOT_HIP|ITEM_SLOT_NECK|ITEM_SLOT_RING|ITEM_SLOT_HANDS
 	obj_flags = null
 	icon = 'icons/roguetown/items/misc.dmi'
 	w_class = WEIGHT_CLASS_SMALL
 	experimental_inhand = FALSE
 	muteinmouth = TRUE
+	nudist_approved = TRUE
 	var/cooldown = 60 SECONDS
 	var/on_cooldown = FALSE
 	var/listening = TRUE

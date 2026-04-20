@@ -49,6 +49,8 @@
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
 	sewrepair = TRUE
+	cold_protection = HEAD
+	min_cold_protection_temperature = BODYTEMP_COLD_LEVEL_ONE_MAX
 
 /obj/item/clothing/neck/roguetown/coif/padded
 	name = "padded coif"
@@ -65,6 +67,8 @@
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
 	sewrepair = TRUE
+	cold_protection = HEAD
+	min_cold_protection_temperature = BODYTEMP_COLD_LEVEL_ONE_MAX
 
 /obj/item/clothing/neck/roguetown/coif/heavypadding
 	name = "heavy padded coif"
@@ -81,6 +85,8 @@
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
 	sewrepair = TRUE
+	cold_protection = HEAD
+	min_cold_protection_temperature = BODYTEMP_COLD_LEVEL_ONE_MAX
 
 /obj/item/clothing/neck/roguetown/coif/heavypadding/ComponentInitialize()
 	return
@@ -369,9 +375,9 @@
 	max_integrity = ARMOR_INT_SIDE_STEEL
 	smeltresult = /obj/item/ingot/aaslag
 
-/obj/item/clothing/neck/roguetown/gorget/cursed_collar
-	name = "cursed collar"
-	desc = "A metal collar that seems to radiate an ominous aura."
+/obj/item/clothing/neck/roguetown/gorget/cursed_collar // minor flavor swap so people know it's a scam shitty knockoff.
+	name = "lesser cursed collar"
+	desc = "A metal collar that seems to radiate an ominous aura. A pale imitation of it's artificed counterpart. \nLooks like you'd need someone else's help to take it off."
 	icon_state = "cursed_collar"
 	item_state = "cursed_collar"
 	armor = ARMOR_CLOTHING
@@ -387,7 +393,6 @@
 
 /obj/item/clothing/neck/roguetown/gorget/cursed_collar/Initialize(mapload)
 	. = ..()
-	name = "cursed collar"
 	ADD_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
 /*
 /obj/item/clothing/neck/roguetown/gorget/cursed_collar/dropped(mob/living/carbon/human/user)
@@ -410,6 +415,7 @@
 	anvilrepair = /datum/skill/craft/armorsmithing
 	grid_width = 32
 	grid_height = 32
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/psicross/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
 	..()
@@ -436,7 +442,7 @@
 
 /obj/item/clothing/neck/roguetown/psicross/inhumen/aalloy
 	name = "ancient zcross"
-	desc = "'Progress. Ascension. Destiny. A mandate, commanded by God, to be fufilled by Man. She called us forth from the edge of reality - and with Her dying breath, rasped out the final truth; the fire is gone, and the world will soon follow.'"
+	desc = "'Progress. Ascension. Destiny. A mandate, commanded by God, to be fulfilled by Man. She called us forth from the edge of reality - and with Her dying breath, rasped out the final truth; the fire is gone, and the world will soon follow.'"
 	icon_state = "zcross_a"
 	color = "#bb9696"
 	resistance_flags = FIRE_PROOF
@@ -541,6 +547,12 @@
 	resistance_flags = FIRE_PROOF
 	sellprice = 100
 
+/obj/item/clothing/neck/roguetown/psicross/reform
+	name = "reformist psycross"
+	desc = "A psycross with its prongs bent inward. God is dead, but this world HE left is beautiful and worth of loving. ENDURE with every broken bone in your body."
+	sellprice = 0
+	icon_state = "psycross_reform"
+
 /obj/item/clothing/neck/roguetown/psicross/pearl //put it as a psycross so it can be used for miracles
 	name = "pearl amulet"
 	icon_state = "pearlcross"
@@ -614,7 +626,7 @@
 
 /obj/item/clothing/neck/roguetown/shalal
 	name = "desert rider medal"
-	desc = "Made out of the silver from the Ranesheni mercenaries' first pay. A tradition is kept between these hired blades: to give this one away to someone is to symbolize a debt in their favor - to be redeemed by any other mercenary in times of need."
+	desc = "Made out of the silver from the Zybantine mercenaries' first pay. A tradition is kept between these hired blades: to give this one away to someone is to symbolize a debt in their favor - to be redeemed by any other mercenary in times of need."
 	icon_state = "shalal"
 	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_HIP|ITEM_SLOT_WRISTS|ITEM_SLOT_RING		//Hey I guess you could pretend it is wrapped around your hand? Just keep it on, don't be a hoe.
 	//dropshrink = 0.75
@@ -659,6 +671,7 @@
 	resistance_flags = FIRE_PROOF
 	sellprice = 100
 	anvilrepair = /datum/skill/craft/armorsmithing
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/psicross/naledi
 	name = "naledian psy-bracelet"
@@ -679,6 +692,7 @@
 	bellsound = FALSE
 	bell = FALSE
 	salvage_result = null
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/collar/leather
 	name = "leather collar"
@@ -707,7 +721,7 @@
 
 /obj/item/clothing/neck/roguetown/collar/cowbell/Initialize(mapload)
 		. = ..()
-		AddComponent(/datum/component/squeak, SFX_COLLARJINGLE, 50, 100, 1) //We want squeak so wearer jingles if touched while wearing collar
+		AddComponent(/datum/component/squeak, SFX_CBJINGLE, 50, 100, 1) //We want squeak so wearer jingles if touched while wearing collar
 
 /obj/item/clothing/neck/roguetown/collar/catbell
 	name = "catbell collar"
@@ -736,6 +750,7 @@
 	dropshrink = 0.5
 	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_MASK
 	body_parts_covered = NECK|FACE
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/collar/surgcollar
 	name = "surgcollar"
@@ -748,6 +763,7 @@
 	dropshrink = 0.5
 	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_MASK
 	body_parts_covered = NECK|FACE
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/luckcharm
 	name = "luck charm"
@@ -761,6 +777,7 @@
 	var/goodluckactivated = FALSE
 	salvage_result = /obj/item/natural/fibers
 	salvage_result = 1
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/luckcharm/equipped(mob/living/carbon/human/user, slot)
 	. = ..()
@@ -939,6 +956,21 @@
 		say("YOUR PENANCE WILL BE COMPLETE IN [timer_minutes] MINUTES.")
 	return
 
+/obj/item/clothing/neck/roguetown/collar/woolen
+	name = "woolen collar"
+	desc = "A comfortable and thick collar made of wools and cloth, not protective but it sure keeps your neck warm."
+	icon_state = "woolencollar"
+	item_state = "woolencollar"
+	icon = 'icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/neck.dmi'
+	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_MOUTH
+	salvage_result = /obj/item/natural/cloth
+	salvage_amount = 1
+	color = CLOTHING_BLACK
+	muteinmouth = FALSE
+	spitoutmouth = FALSE
+	sewrepair = TRUE
+
 //This is a super good neck slot item, granting +2LCK/Darkvision/HardDismember/NoDamageSlowdown.
 //Horrible compared to +2 in all stats and the 10k durability it used to have. But you can't have it all.
 //You can get these so easily that it's just dumb for them to be so absurd. Especially now with explosive bandits and the like.
@@ -1031,6 +1063,7 @@
 	sellprice = 0
 	salvage_result = null
 	smeltresult = null
+	nudist_approved = TRUE
 
 /obj/item/clothing/neck/roguetown/carved/jadeamulet
 	name = "jade amulet"
