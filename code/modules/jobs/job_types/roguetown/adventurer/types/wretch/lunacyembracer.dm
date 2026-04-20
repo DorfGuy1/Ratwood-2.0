@@ -3,7 +3,6 @@
 	tutorial = "You have rejected and terrorized civilization in the name of nature. You run wild under the moon, a terror to the townsfolk and a champion of Dendor's wild domain."
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = RACES_NO_CONSTRUCT
-	min_pq = 30 //less dogshit cryptids please
 	disallowed_races = list(
 		/datum/species/harpy,	//for further clarification, basically, FLYING LUNACY EMBRACERS. embracers getting into sneaky places they shouldn't goes about as well as you'd think
 	)
@@ -11,7 +10,6 @@
 	class_select_category = CLASS_CAT_ACCURSED
 	category_tags = list(CTAG_WRETCH)
 	maximum_possible_slots = 2
-	extra_context = "Minimum PQ Required: 30"
 
 	traits_applied = list(
 		TRAIT_NUDIST,
