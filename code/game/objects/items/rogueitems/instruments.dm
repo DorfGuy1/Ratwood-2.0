@@ -4,7 +4,9 @@
 	extra_range = 10	// Increase sound range.
 	persistent_loop = TRUE
 	var/stress2give = /datum/stressevent/music
-	sound_group = null
+	sound_group = /datum/sound_group/instruments
+	/// Channel held in reserve while not playing, so it doesn't block looping_sound internals.
+	var/parked_channel
 
 GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 
@@ -146,9 +148,11 @@ GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 
 /datum/looping_sound/instrument/New(_parent, start_immediately=FALSE, _direct=FALSE, _channel = 0)
 	. = ..(_parent, FALSE, _direct, _channel)
-	// Instruments can be widespread on the map. Reserve channels only while actively playing.
+	// The sound group assigns a channel in the parent New(). Park it so the
+	// instrument doesn't hold an active channel while idle, but we keep the
+	// group-allocated channel so start() never needs reserve_sound_channel.
 	if(channel)
-		SSsounds.free_datum_channels(src)
+		parked_channel = channel
 		channel = null
 	if(start_immediately)
 		start()
@@ -157,11 +161,13 @@ GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 	if(sync_anchor)
 		starttime = sync_anchor
 	if(!channel)
-		channel = SSsounds.reserve_sound_channel(src)
-		if(!channel)
+		if(!parked_channel)
+			// Fallback: group pool exhausted (>all simultaneous instruments).
 			var/atom/resolved_parent = parent?.resolve()
-			log_game("INSTRUMENT: Failed to reserve sound channel for [resolved_parent] - channels may be exhausted (reserve_high=[SSsounds.channel_reserve_high], random_min=[SSsounds.random_channels_min])")
+			log_game("INSTRUMENT: No parked channel available for [resolved_parent] - all instrument group channels in use simultaneously.")
 			return FALSE
+		channel = parked_channel
+		parked_channel = null
 	..()
 	return TRUE
 
@@ -185,7 +191,9 @@ GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 				SEND_SOUND(C, sound(null, repeat = 0, wait = 0, channel = stop_channel))
 			C.played_loops -= src
 		thingshearing = list()  // Clear AFTER parent and client loop are done.
-		SSsounds.free_datum_channels(src)
+		// Return the channel to the parked state — don't free it via SSsounds
+		// since it belongs to the sound group, not the datum's own reservation.
+		parked_channel = channel
 		channel = null
 	else
 		. = ..(null_parent)
