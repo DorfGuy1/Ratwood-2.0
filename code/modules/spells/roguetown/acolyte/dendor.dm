@@ -1,18 +1,18 @@
 // Druid
 /obj/effect/proc_holder/spell/targeted/blesscrop
 	name = "Bless Crops"
-	desc = "Bless a targeted soil plot or tree. Holy skill increases stored charges. Revives dead plants, gives them nutrition and water if low & boosts their growth. Blessed seed powder can expend all charges to bless up to five nearby planted soils at once."
+	desc = "Bless a targeted soil plot or tree. Druidic Trickery increases stored charges. Revives dead plants, gives them nutrition and water if low & boosts their growth. Blessed seed powder can expend all charges to bless up to five nearby planted soils at once."
 	range = 5
 	selection_type = "range"
 	overlay_state = "blesscrop"
-	releasedrain = 30
+	releasedrain = 15
 	charge_type = "charges"
 	recharge_time = 1
 	req_items = list(/obj/item/clothing/neck/roguetown/psicross)
 	max_targets = 1
 	cast_without_targets = FALSE
 	sound = 'sound/magic/churn.ogg'
-	associated_skill = /datum/skill/magic/holy
+	associated_skill = /datum/skill/magic/druidic
 	invocations = list("The Treefather commands thee, be fruitful!")
 	invocation_type = "shout" //can be none, whisper, emote and shout
 	miracle = TRUE
@@ -103,13 +103,18 @@
 	return max(1, 1 + user.get_skill_level(associated_skill))
 
 /obj/effect/proc_holder/spell/targeted/blesscrop/proc/sync_bless_charges(mob/user)
+	var/old_max = max_bless_charges
 	max_bless_charges = get_max_bless_charges(user)
 	if(!charges_initialized && user)
 		// First sync with a real user — set charges to the skill-based maximum immediately.
 		charges_initialized = TRUE
 		charge_counter = max_bless_charges
 	else if(!empty_refill_active)
-		charge_counter = clamp(charge_counter, 0, max_bless_charges)
+		if(max_bless_charges > old_max)
+			// Skill level increased — award the extra charges proportionally.
+			charge_counter = min(charge_counter + (max_bless_charges - old_max), max_bless_charges)
+		else
+			charge_counter = clamp(charge_counter, 0, max_bless_charges)
 
 /obj/effect/proc_holder/spell/targeted/blesscrop/proc/start_empty_refill()
 	if(empty_refill_active)

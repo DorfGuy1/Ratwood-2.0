@@ -377,8 +377,8 @@
 	switch(category)
 		if("cat1") return list("food_item" = 6)
 		if("cat2") return list("manabloom_or_manacrystal" = 10)
-		if("cat3") return list("runed_or_leyline" = 2, "blessed_powder_alt" = 5)
-		if("cat4") return list("enchanted_stone_or_boulder" = 5)
+		if("cat3") return list("runed_or_leyline" = 1, "blessed_powder_alt" = 4)
+		if("cat4") return list("boulder_cat4" = 5, "any_stone_cat4" = 15)
 		if("cat5") return list("vital_item" = 10, "ash" = 10, "compost" = 10)
 		if("cat6") return list("zizobane" = 5, "runed_artifact" = 2, "druid_armor" = 1, "volf_head" = 1, "spider_head" = 1, "tree_seed" = 1, "blessed_seed_powder" = 1, "holy_water_container" = 1)
 		if("cat7") return list("leechtick" = 1, "bones" = 4)
@@ -412,6 +412,8 @@
 		if("runed_or_leyline") return "Runed artifact OR leyline shard"
 		if("blessed_powder_alt") return "Blessed seed powder"
 		if("enchanted_stone_or_boulder") return "Enchanted stone (magic power 5+) OR boulder"
+		if("boulder_cat4") return "A large boulder"
+		if("any_stone_cat4") return "A stone of any type"
 		if("vital_item") return "Sinew, viscera, bonemeal, or skull"
 		if("ash") return "Ash"
 		if("compost") return "Compost"
@@ -428,7 +430,7 @@
 		if("bones") return "Bones"
 		if("wedding_flower") return "Eoran peace flower"
 		if("boulder_only") return "A large boulder"
-		if("magic_stone_or_essence") return "An enchanted stone (magic power 10+), essence of wilderness, or essence of lumber"
+		if("magic_stone_or_essence") return "An enchanted stone (magic power 5+), essence of wilderness, or essence of lumber"
 		if("blessed_powder") return "Blessed seed powder"
 		if("herb_atropa")    return "Atropa herb"
 		if("herb_matricaria") return "Matricaria herb"
@@ -455,20 +457,20 @@
 /obj/structure/flora/roguetree/wise/sanctified/proc/show_ritual_requirements(mob/living/user, category)
 	var/req = get_required_offerings(category)
 	to_chat(user, span_info("=== [get_ritual_display_name(category)] requirements ==="))
-	if(category == "cat3")
-		var/primary_cur = tree_data.ritual_progress["runed_or_leyline"] || 0
-		var/primary_needed = req["runed_or_leyline"]
-		var/alt_cur = tree_data.ritual_progress["blessed_powder_alt"] || 0
-		var/alt_needed = req["blessed_powder_alt"]
+	if(category == "cat4")
+		var/boulder_cur = tree_data.ritual_progress["boulder_cat4"] || 0
+		var/boulder_needed = req["boulder_cat4"]
+		var/stone_cur = tree_data.ritual_progress["any_stone_cat4"] || 0
+		var/stone_needed = req["any_stone_cat4"]
 		to_chat(user, span_info("  Offer one of the following alternatives:"))
-		if(primary_cur >= primary_needed)
-			to_chat(user, span_notice("  [get_offering_desc("runed_or_leyline")]: [primary_cur]/[primary_needed] (fulfilled)"))
+		if(boulder_cur >= boulder_needed)
+			to_chat(user, span_notice("  [get_offering_desc("boulder_cat4")]: [boulder_cur]/[boulder_needed] (fulfilled)"))
 		else
-			to_chat(user, span_warning("  Option A — [get_offering_desc("runed_or_leyline")]: [primary_cur]/[primary_needed]"))
-		if(alt_cur >= alt_needed)
-			to_chat(user, span_notice("  [get_offering_desc("blessed_powder_alt")]: [alt_cur]/[alt_needed] (fulfilled)"))
+			to_chat(user, span_warning("  Option A — [get_offering_desc("boulder_cat4")]: [boulder_cur]/[boulder_needed]"))
+		if(stone_cur >= stone_needed)
+			to_chat(user, span_notice("  [get_offering_desc("any_stone_cat4")]: [stone_cur]/[stone_needed] (fulfilled)"))
 		else
-			to_chat(user, span_warning("  Option B — [get_offering_desc("blessed_powder_alt")]: [alt_cur]/[alt_needed]"))
+			to_chat(user, span_warning("  Option B — [get_offering_desc("any_stone_cat4")]: [stone_cur]/[stone_needed]"))
 		return
 	for(var/key in req)
 		var/current = tree_data.ritual_progress[key] || 0
@@ -486,20 +488,55 @@
 		to_chat(user, span_warning("I am not holding anything to offer."))
 		return FALSE
 	var/req = get_required_offerings(tree_data.active_ritual)
-	// For cat3, skip accepting items for the alternative path once one path is already completed.
-	var/skip_primary = (tree_data.active_ritual == "cat3") && ((tree_data.ritual_progress["blessed_powder_alt"] || 0) >= req["blessed_powder_alt"])
-	var/skip_alt = (tree_data.active_ritual == "cat3") && ((tree_data.ritual_progress["runed_or_leyline"] || 0) >= req["runed_or_leyline"])
+	// For cat4, skip accepting items for the path that is already completed.
+	var/skip_boulder_cat4 = (tree_data.active_ritual == "cat4") && ((tree_data.ritual_progress["any_stone_cat4"] || 0) >= req["any_stone_cat4"])
+	var/skip_stone_cat4 = (tree_data.active_ritual == "cat4") && ((tree_data.ritual_progress["boulder_cat4"] || 0) >= req["boulder_cat4"])
+	// Support taking items from a held storage container (sack, satchel, bag).
+	var/obj/item/storage/held_sack = istype(held, /obj/item/storage) ? held : null
+	if(held_sack)
+		// Bulk mode: for every unfulfilled key, drain all matching items from the sack at once.
+		var/any_taken = FALSE
+		for(var/key in req)
+			var/current = tree_data.ritual_progress[key] || 0
+			if(current >= req[key])
+				continue
+			if(skip_boulder_cat4 && key == "boulder_cat4")
+				continue
+			if(skip_stone_cat4 && key == "any_stone_cat4")
+				continue
+			// Snapshot contents so deletions during iteration are safe.
+			var/list/sack_contents = held_sack.contents.Copy()
+			for(var/obj/item/sack_item in sack_contents)
+				if(current >= req[key])
+					break
+				if(!check_offering_match(key, sack_item))
+					continue
+				if(tree_data.active_ritual == "cat1" && key == "food_item")
+					if(!istype(sack_item, /obj/item/reagent_containers/food/snacks/grown/berries))
+						tree_data.cat1_all_berries = FALSE
+				consume_offering(key, sack_item, user)
+				current++
+				tree_data.ritual_progress[key] = current
+				playsound(get_turf(src), 'sound/magic/churn.ogg', 40, FALSE)
+				any_taken = TRUE
+		if(any_taken)
+			if(check_ritual_complete())
+				complete_ritual(user)
+			return TRUE
+		to_chat(user, span_warning("The tree does not need anything from that container right now."))
+		return FALSE
+	// Single-item mode: consume the held item if it matches any unfulfilled requirement.
 	for(var/key in req)
 		var/current = tree_data.ritual_progress[key] || 0
 		if(current >= req[key])
 			continue
-		if(skip_primary && key == "runed_or_leyline")
+		if(skip_boulder_cat4 && key == "boulder_cat4")
 			continue
-		if(skip_alt && key == "blessed_powder_alt")
+		if(skip_stone_cat4 && key == "any_stone_cat4")
 			continue
 		if(!check_offering_match(key, held))
 			continue
-		// Track whether cat1 offering is a berry
+		// Track whether cat1 offering is a berry.
 		if(tree_data.active_ritual == "cat1" && key == "food_item")
 			if(!istype(held, /obj/item/reagent_containers/food/snacks/grown/berries))
 				tree_data.cat1_all_berries = FALSE
@@ -572,6 +609,10 @@
 				var/obj/item/natural/stone/stone = held
 				return stone.magic_power >= 5
 			return istype(held, /obj/item/natural/rock)
+		if("boulder_cat4")
+			return istype(held, /obj/item/natural/rock)
+		if("any_stone_cat4")
+			return istype(held, /obj/item/natural/stone)
 		if("vital_item")
 			return istype(held, /obj/item/alch/sinew) || istype(held, /obj/item/alch/viscera) || istype(held, /obj/item/alch/bonemeal) || istype(held, /obj/item/skull)
 		if("ash")
@@ -614,7 +655,7 @@
 			if(!istype(held, /obj/item/natural/stone))
 				return FALSE
 			var/obj/item/natural/stone/stone = held
-			return stone.magic_power >= 10
+			return stone.magic_power >= 5
 		if("blessed_powder")
 			// Exact type check — bloomstone is excluded intentionally.
 			return held.type == /obj/item/alch/blessedseedpowder
@@ -661,6 +702,8 @@
 			qdel(held)
 		if("boulder_only", "magic_stone_or_essence", "blessed_powder")
 			qdel(held)
+		if("boulder_cat4", "any_stone_cat4")
+			qdel(held)
 		if("herb_atropa", "herb_matricaria", "herb_symphitum", "herb_taraxacum", "herb_euphrasia",
 		   "herb_paris", "herb_calendula", "herb_mentha", "herb_urtica", "herb_salvia",
 		   "herb_hypericum", "herb_benedictus", "herb_valeriana", "herb_artemisia", "herb_rosa",
@@ -679,11 +722,11 @@
 	if(!tree_data?.active_ritual)
 		return FALSE
 	var/req = get_required_offerings(tree_data.active_ritual)
-	// Cat 3: runed_or_leyline and blessed_powder_alt are alternatives — either fully satisfied completes the ritual.
-	if(tree_data.active_ritual == "cat3")
-		var/primary_done = (tree_data.ritual_progress["runed_or_leyline"] || 0) >= req["runed_or_leyline"]
-		var/alt_done = (tree_data.ritual_progress["blessed_powder_alt"] || 0) >= req["blessed_powder_alt"]
-		return primary_done || alt_done
+	// Cat 4: boulder_cat4 and any_stone_cat4 are alternatives — either fully satisfied completes the ritual.
+	if(tree_data.active_ritual == "cat4")
+		var/boulder_done = (tree_data.ritual_progress["boulder_cat4"] || 0) >= req["boulder_cat4"]
+		var/stone_done = (tree_data.ritual_progress["any_stone_cat4"] || 0) >= req["any_stone_cat4"]
+		return boulder_done || stone_done
 	for(var/key in req)
 		if((tree_data.ritual_progress[key] || 0) < req[key])
 			return FALSE
@@ -744,7 +787,7 @@
 
 /// Cat 1 — Dendor's Harvest: seed bounty (repeatable).
 /// Offerings: 5 any fruit/grain/vegetable food items (rotten okay).
-/// Reward (normal): 1 random misc seed + 1 tree seed (2% sakura, 10% pine, 88% regular).
+/// Reward (normal): 1 random misc seed + 1 tree seed (5% sakura, 10% pine, 85% regular).
 /// Reward (berry special case, all 5 berries): 1 wild bush seed + 50% chance flower seed.
 /obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat1(mob/living/user)
 	var/turf/T = get_turf(user)
@@ -789,11 +832,11 @@
 		/obj/item/seeds/berryrogue                   = 3
 	))
 	new misc(T)
-	// Tree seed: 2% sakura, 10% pine, 88% regular
+	// Tree seed: 5% sakura, 10% pine, 85% regular
 	var/tree_type = pickweight(list(
-		/obj/item/seeds/treesap/sakura = 2,
+		/obj/item/seeds/treesap/sakura = 5,
 		/obj/item/seeds/treesap/pine   = 10,
-		/obj/item/seeds/treesap        = 88
+		/obj/item/seeds/treesap        = 85
 	))
 	new tree_type(T)
 	to_chat(user, span_green("Seeds tumble from the roots — Dendor's harvest is generous."))
@@ -803,8 +846,8 @@
 /// Buff: longstrider + +2 Perception + +1 Speed + kneestinger immunity, 30 minutes.
 /obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat2(mob/living/user)
 	var/turf/T = get_turf(src)
-	// Plant kneestingers in a full ring (8 directions) around the tree.
-	for(var/D in GLOB.alldirs)
+	// Plant kneestingers in the 4 cardinal directions around the tree.
+	for(var/D in GLOB.cardinals)
 		var/turf/adj = get_step(T, D)
 		if(adj && !isclosedturf(adj) && !locate(/obj/structure/glowshroom) in adj)
 			new /obj/structure/glowshroom(adj)
@@ -821,7 +864,7 @@
 	to_chat(user, span_green("Kneestingers erupt in a ring — the Treefather's vigil strengthens his faithful."))
 
 /// Cat 3 — Fey Weaving: mushroom fey circle seeds (repeatable).
-/// Offerings: 2 runed artifacts OR leyline shards, OR 5 blessed seed powder. Reward: 2 mushroom_fey seeds.
+/// Offerings: 1 runed artifact or leyline shard + 4 blessed seed powder. Reward: 2 mushroom_fey seeds.
 /obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat3(mob/living/user)
 	var/turf/T = get_turf(user)
 	new /obj/item/seeds/mushroom_fey(T)
@@ -1252,7 +1295,7 @@
 	. += span_info("[src] draws strength from [tree_count] nearby living tree\s, granting [integrity_bonus] bonus integrity.")
 	. += span_info("Integrity: [round(obj_integrity)]/[max_integrity]")
 	if(show_ritual_hints)
-		. += span_info("Open the ritual menu with the Dendor amulet to begin a 'Nature's Union' wedding ceremony; the betrothed must each bite the same apple once and offer it to the tree to seal the pact.")
+		. += span_info("Open the ritual menu with the Dendor amulet to begin any druidic ritual, or start the 'Nature's Union' wedding ceremony; the betrothed must each bite the same apple once and offer it to the tree to seal the pact.")
 	if(!istype(user, /mob/living/carbon/human))
 		return
 	var/mob/living/carbon/human/H = user

@@ -65,6 +65,7 @@
 		/datum/skill/combat/polearms = SKILL_LEVEL_NOVICE, //To help them defend themselves with parrying
 		/datum/skill/combat/staves = SKILL_LEVEL_NOVICE, //This, too.
 		/datum/skill/craft/cooking = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/labor/butchering = SKILL_LEVEL_APPRENTICE,
 	)
 
 /datum/outfit/job/roguetown/druid
