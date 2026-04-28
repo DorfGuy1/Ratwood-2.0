@@ -123,20 +123,18 @@
 		return TRUE
 	return FALSE
 
-/obj/structure/flora/newtree/update_icon()
-	icon_state = ""
+/obj/structure/flora/newtree/update_icon_state()
+	icon_state = burnt ? "burnt" : ""
+
+/obj/structure/flora/newtree/update_overlays()
+	. = ..()
 	if(burnt)
-		icon_state = "burnt"
-		cut_overlays()
 		return
-	cut_overlays()
-	var/mutable_appearance/M
 	if(base_state)
-		M = mutable_appearance(icon, "[base_state]")
-		add_overlay(M)
-	M = mutable_appearance(icon, "tree[tree_type]")
+		. += mutable_appearance(icon, "[base_state]")
+	var/mutable_appearance/M = mutable_appearance(icon, "tree[tree_type]")
 	M.dir = dir
-	add_overlay(M)
+	. += M
 
 /obj/structure/flora/newtree/Initialize(mapload)
 	. = ..()
@@ -217,17 +215,19 @@
 	density = FALSE
 	max_integrity = 30
 
-/obj/structure/flora/newbranch/update_icon()
+/obj/structure/flora/newbranch/update_icon_state()
 	icon_state = ""
-	cut_overlays()
+
+/obj/structure/flora/newbranch/update_overlays()
+	. = ..()
 	var/mutable_appearance/M
 	if(base_state)
 		M = mutable_appearance(icon, "[base_state]")
 		M.dir = pick(GLOB.cardinals)
-		add_overlay(M)
+		. += M
 	M = mutable_appearance(icon, "branch-end[rand(1,2)]")
 	M.dir = dir
-	add_overlay(M)
+	. += M
 
 /obj/structure/flora/newbranch/Initialize(mapload)
 	. = ..()
@@ -239,27 +239,31 @@
 /obj/structure/flora/newbranch/connector
 	icon_state = "branch-extend"
 
-/obj/structure/flora/newbranch/connector/update_icon()
+/obj/structure/flora/newbranch/connector/update_icon_state()
 	icon_state = ""
-	cut_overlays()
+
+/obj/structure/flora/newbranch/connector/update_overlays()
+	. = ..()
 	var/mutable_appearance/M
 	if(base_state)
 		M = mutable_appearance(icon, "[base_state]")
 		M.dir = pick(GLOB.cardinals)
-		add_overlay(M)
+		. += M
 	M = mutable_appearance(icon, "branch-extend")
 	M.dir = dir
-	add_overlay(M)
+	. += M
 
 /obj/structure/flora/newbranch/leafless
 	base_state = FALSE
 
-/obj/structure/flora/newbranch/leafless/update_icon()
+/obj/structure/flora/newbranch/leafless/update_icon_state()
 	icon_state = ""
-	cut_overlays()
+
+/obj/structure/flora/newbranch/leafless/update_overlays()
+	. = ..()
 	var/mutable_appearance/M = mutable_appearance(icon, "branch-end[rand(1,2)]")
 	M.dir = dir
-	add_overlay(M)
+	. += M
 
 /// LEAF
 
