@@ -59,7 +59,8 @@ Balloon Alert / Floating Text defines
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
 	/datum/species/dwarf/gnome,\
-	/datum/species/harpy\
+	/datum/species/harpy,\
+	/datum/species/arachnid,\
 )
 
 #define RACES_RESPECTED \
@@ -83,6 +84,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/demihuman,\
 	/datum/species/harpy,\
 	/datum/species/lamia,\
+	/datum/species/arachnid,\
 	/datum/species/anthromorphsmall,\
 	/datum/species/kobold,\
 	/datum/species/tieberian,\
@@ -161,7 +163,8 @@ Balloon Alert / Floating Text defines
 	/datum/species/construct/metal/porcelain,\
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
-	/datum/species/dwarf/gnome\
+	/datum/species/dwarf/gnome,\
+	/datum/species/arachnid,\
 )
 // Non-dwarf non-kobold non-goblin mostly
 #define NON_DWARVEN_RACE_TYPES list(\
@@ -186,6 +189,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/construct/metal/porcelain,\
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
+	/datum/species/arachnid,\
 )
 // Non-elf non-dwarf non-kobold non-goblin mostly
 #define HUMANLIKE_RACE_TYPES list(\
@@ -206,6 +210,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/harpy,\
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
+	/datum/species/arachnid,\
 )
 #define ALL_CLERIC_PATRONS list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/dendor, /datum/patron/divine/necra, /datum/patron/divine/pestra, /datum/patron/divine/ravox, /datum/patron/divine/malum, /datum/patron/divine/eora) // Currently unused.
 
@@ -318,6 +323,13 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define CTAG_GNOLL			"CAT_GNOLL"			// Wretch-esque gnolls, graggar's chosen.
 #define CTAG_GNOLL_IMPURE	"CAT_GNOLL_IMPURE"	// Reward for beating enough gnolls.
 
+#define CTAG_TRIBAL				"CAT_TRIBAL"			// 
+#define CTAG_TRIBALCHIEFTAIN	"CAT_TRIBALCHIEFTAIN"	// 
+#define CTAG_TRIBALSHAMAN		"CAT_TRIBALSHAMAN"		// 
+#define CTAG_TRIBALGUARD		"CAT_TRIBALGUARD"		// 
+#define CTAG_TRIBALRABBLE		"CAT_TRIBALRABBLE"		// 
+#define CTAG_TRIBALVILLAGER		"CAT_TRIBALVILLAGER"	// 
+
 #define CTAG_WARDEN			"CAT_WARDEN"		// Warden class - Handles warden class selector.
 #define CTAG_VANGUARD		"CAT_VANGUARD"		// Vanguard class - Handles vanguard class selector.
 #define CTAG_WATCH			"CAT_WATCH"			// Watch class - Handles Town Watch class selector
@@ -413,6 +425,7 @@ GLOBAL_LIST_EMPTY(round_join_times)
 
 //Mercenary categories
 #define CLASS_CAT_ETRUSCA "Etrusca"
+#define CLASS_CAT_FERENTIA "Ferentia"
 #define CLASS_CAT_GRENZELHOFT "Grenzelhoft"
 #define CLASS_CAT_NALEDI "Naledi"
 #define CLASS_CAT_ZYBANTU "Zybantium"
