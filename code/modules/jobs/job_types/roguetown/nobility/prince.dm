@@ -170,9 +170,8 @@
 	name = "Sheltered Aristocrat"
 	tutorial = "Life has been kind to you; you've an entire keep at your disposal, servants to wait on you, and a whole retinue of guards to guard you. You've nothing to prove; just live the good life and you'll be a lord someday, too. A lack of ambition translates into a lacking skillset beyond schooling, though, and your breaks from boredom consist of being a damsel or court gossip."
 	outfit = /datum/outfit/job/roguetown/heir/aristocrat
-	traits_applied = list(TRAIT_SEEPRICES_SHITTY, TRAIT_GOODLOVER)
+	traits_applied = list(TRAIT_SEEPRICES_SHITTY, TRAIT_GOODLOVER, TRAIT_SEWING_EXPERT)
 	category_tags = list(CTAG_HEIR)
-	traits_applied = list(TRAIT_SEWING_EXPERT)
 	subclass_stats = list(
 		STATKEY_PER = 2,
 		STATKEY_STR = -1,
