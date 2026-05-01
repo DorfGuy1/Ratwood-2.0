@@ -60,7 +60,7 @@ SUBSYSTEM_DEF(soundloopers)
 		if(get_dist(get_turf(mob),parent_turf) > world.view + PS.extra_range) //Too far away. get_dist shouldn't be too awful for repeated calcs
 			continue
 
-		if(mob_turf.z - parent_turf.z > 2 || mob_turf.z - parent_turf.z < 2) //for some reason get_dist not checking this properly
+		if(mob_turf.z - parent_turf.z > 2 || mob_turf.z - parent_turf.z < -2) //for some reason get_dist not checking this properly
 			continue
 
 		//otherwise add it to the client loops and off we go from there
@@ -80,6 +80,10 @@ SUBSYSTEM_DEF(soundloopers)
 		
 		var/atom/loop_parent = loop.parent?.resolve()
 		if(!loop_parent)
+			// Parent is gone — stale entry. Remove it so its old channel number
+			// can't corrupt volume-update packets sent to a recycled channel.
+			// Do NOT stop the channel: it may have been reused by another datum.
+			played_loops -= loop
 			continue
 
 		if(mob && loop_parent == mob) //the sound's coming from inside the house!

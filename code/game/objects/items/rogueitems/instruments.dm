@@ -155,6 +155,16 @@ GLOBAL_LIST_EMPTY(instrument_band_lobbies)
 				break
 	return cached
 
+// attach_loop_to_all_clients() sends a vol=0 sound to every client before the
+// song has actually started, pre-populating their played_loops with a stale entry.
+// When the real play() fires, playsound_local finds them already in thingshearing
+// and only issues a volume update on the finished silent sound instead of
+// sending it fresh — so clients never hear it. Skip this entirely for instruments;
+// the initial playsound() in play() covers in-range clients, and the update_sounds()
+// rescan in SSsoundloopers covers late-joiners via GLOB.persistent_sound_loops.
+/datum/looping_sound/instrument/attach_loop_to_all_clients()
+	return
+
 /datum/looping_sound/instrument/New(_parent, start_immediately=FALSE, _direct=FALSE, _channel = 0)
 	. = ..(_parent, FALSE, _direct, _channel)
 	// Parent assigned a channel via round-robin; return it to the pool since
