@@ -990,7 +990,7 @@ GLOBAL_LIST_EMPTY(loadout_items)
 
 /datum/loadout_item/zcross_iron
 	name = "Zizo Cross"
-	path = /obj/item/clothing/neck/roguetown/zcross/iron
+	path = /obj/item/clothing/neck/roguetown/psicross/inhumen
 
 // NECKLACES & AMULETS
 /datum/loadout_item/skull_amulet
