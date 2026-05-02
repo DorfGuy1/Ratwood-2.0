@@ -376,10 +376,9 @@
 			if(top?.dna?.species?.id == "gnoll")
 				btm.has_gnoll_scent_this_round = TRUE
 			modular_record_collar_receive_event(btm, top)
-			if(!btm.has_status_effect(/datum/status_effect/knot_gaped))
-				var/obj/item/organ/testicles/testes = top.getorganslot(ORGAN_SLOT_TESTICLES)
-				var/knot_orifice = top.sexcon.knotted_part_partner & (SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)
-				apply_creampie_drip(btm, knot_orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
+			var/obj/item/organ/testicles/testes = top.getorganslot(ORGAN_SLOT_TESTICLES)
+			var/knot_orifice = top.sexcon.knotted_part_partner & (SEX_PART_CUNT|SEX_PART_ANUS|SEX_PART_SLIT_SHEATH)
+			apply_creampie_drip(btm, knot_orifice, use_long = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
 		if(top.sexcon.knotted_part_partner&SEX_PART_JAWS)
 			var/datum/status_effect/facial/facial = btm.has_status_effect(/datum/status_effect/facial)
 			if(!facial)
