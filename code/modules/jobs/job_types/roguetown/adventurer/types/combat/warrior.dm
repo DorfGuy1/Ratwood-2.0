@@ -105,6 +105,7 @@
 		/obj/item/rogueweapon/scabbard/sheath = 1
 		)
 
+
 /datum/advclass/sfighter/duelist
 	name = "Duelist"
 	tutorial = "You are an esteemed swordsman who foregoes armor in exchange for a more nimble fighting style."
@@ -805,4 +806,5 @@
 					r_hand = /obj/item/rogueweapon/shield/tower
 					l_hand = /obj/item/rogueweapon/shield/tower
 					ADD_TRAIT(H, TRAIT_CIVILIZEDBARBARIAN, TRAIT_GENERIC)
+
 					
