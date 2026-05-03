@@ -237,7 +237,7 @@
 		/obj/item/grown/log/tree/stick = 5,
 		/obj/item/natural/fibers = 3,
 		)
-	craftdiff = 1
+	craftdiff = 0
 
 /datum/crafting_recipe/roguetown/survival/mentorhat
 	name = "worn bamboo hat"
