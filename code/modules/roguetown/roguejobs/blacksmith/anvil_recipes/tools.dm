@@ -33,6 +33,11 @@
 	req_bar = /obj/item/ingot/tin
 	craftdiff = SKILL_LEVEL_NOVICE
 
+/datum/anvil_recipe/tools/blacksteel
+	abstract_type = /datum/anvil_recipe/tools/blacksteel
+	req_bar = /obj/item/ingot/blacksteel
+	craftdiff = SKILL_LEVEL_MASTER
+
 // --------- Copper -----------
 /datum/anvil_recipe/tools/copper/sickle
 	name = "Sickle, Copper (+1 Stick)"
@@ -488,24 +493,19 @@
 	i_type = "Casting"
 
 //black steel tools
-/datum/anvil_recipe/tools/blacksteel
-	craftdiff = SKILL_LEVEL_MASTER
 
 /datum/anvil_recipe/tools/blacksteel/hammer
 	name = "Blacksteel hammer (+1 Stick)"
-	req_bar = /obj/item/ingot/blacksteel
 	additional_items = list(/obj/item/grown/log/tree/stick)
 	created_item = /obj/item/rogueweapon/hammer/blacksteel
 
 /datum/anvil_recipe/tools/blacksteel/pick
 	name = "Blacksteel Pickaxe (+1 Stick)"
-	req_bar = /obj/item/ingot/blacksteel
 	additional_items = list(/obj/item/grown/log/tree/stick)
 	created_item = /obj/item/rogueweapon/pick/blacksteel
 
 /datum/anvil_recipe/tools/blacksteel/tongs
 	name = "Blacksteel Tongs"
-	req_bar = /obj/item/ingot/blacksteel
 	created_item = /obj/item/rogueweapon/tongs/blacksteel
 	
 // --------- HEARTBEAST TOOLS -----------
