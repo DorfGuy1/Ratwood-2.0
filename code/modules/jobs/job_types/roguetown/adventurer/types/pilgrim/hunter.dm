@@ -15,7 +15,7 @@
 		STATKEY_SPD = 1
 	)
 	subclass_skills = list(
-		/datum/skill/combat/swords = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/combat/swords = SKILL_LEVEL_NOVICE,
 		/datum/skill/combat/axes = SKILL_LEVEL_NOVICE,
 		/datum/skill/combat/crossbows = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/bows = SKILL_LEVEL_EXPERT,
@@ -49,8 +49,6 @@
 	backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
 	belt = /obj/item/storage/belt/rogue/leather
 	beltr = /obj/item/quiver/arrows
-	beltl = /obj/item/rogueweapon/scabbard/sword
-	l_hand = /obj/item/rogueweapon/sword/short/messer/iron
 	r_hand = /obj/item/storage/meatbag
 	backpack_contents = list(
 				/obj/item/flint = 1,
@@ -72,6 +70,17 @@
 		H.adjust_skillrank_up_to(/datum/skill/craft/tanning, 4, TRUE)
 	if(H.mind)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/huntersyell)
+		var/weapons = list("Machete","Hatchet")
+		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
+		H.set_blindness(0)
+		switch(weapon_choice)
+			if("Machete")
+				beltl = /obj/item/rogueweapon/scabbard/sword
+				l_hand = /obj/item/rogueweapon/sword/short/messer/iron
+				H.adjust_skillrank_up_to(/datum/skill/combat/swords, 2, TRUE)
+			if("Hatchet")
+				l_hand = /obj/item/rogueweapon/stoneaxe/handaxe
+				H.adjust_skillrank_up_to(/datum/skill/combat/axes, 2, TRUE)
 
 /datum/advclass/hunter/spear
 	name = "Spear-Hunter"
@@ -89,6 +98,7 @@
 		/datum/skill/combat/unarmed = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/knives = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/polearms = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/combat/axes = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/swimming = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/craft/crafting = SKILL_LEVEL_APPRENTICE,
@@ -123,7 +133,8 @@
 				/obj/item/flint = 1,
 				/obj/item/bait = 1,
 				/obj/item/rogueweapon/huntingknife = 1,
-				/obj/item/rogueweapon/scabbard/sheath = 1
+				/obj/item/rogueweapon/scabbard/sheath = 1,
+				/obj/item/rogueweapon/stoneaxe/handaxe
 				)
 	gloves = /obj/item/clothing/gloves/roguetown/fingerless_leather
 	if(SSmapping.config.map_name == "Desert Town")
