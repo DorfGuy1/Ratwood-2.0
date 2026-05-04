@@ -36,10 +36,10 @@
 	var/canattack_ghost_reject_total = canattack_observer_rejects + canattack_newplayer_rejects
 	var/canattack_ghost_reject_pct = canattack_calls ? round((canattack_ghost_reject_total * 100) / canattack_calls, 0.01) : 0
 
-	to_chat(src, span_notice("Hostile AI Targeting Metrics:"))
-	to_chat(src, span_notice("ListTargets calls: [listtargets_calls], candidates scanned: [candidates_scanned], avg candidates/call: [avg_candidates_per_call]"))
-	to_chat(src, span_notice("Filtered in ListTargets -> observers: [observer_candidates_filtered], new_player: [newplayer_candidates_filtered], total: [ghost_filtered_total] ([ghost_filtered_pct]%)"))
-	to_chat(src, span_notice("CanAttack calls: [canattack_calls], observer rejects: [canattack_observer_rejects], new_player rejects: [canattack_newplayer_rejects], reject rate: [canattack_ghost_reject_pct]%"))
+	to_chat(src, span_notice("--- Hostile AI Targeting Metrics ---"))
+	to_chat(src, span_notice("NPC scans run: [listtargets_calls] | Mobs found by hearers(): [candidates_scanned] | Avg mobs per scan: [avg_candidates_per_call]"))
+	to_chat(src, span_notice("Ghosts stripped BEFORE targeting loop -> spectators: [observer_candidates_filtered], lobby players: [newplayer_candidates_filtered] | Total ghost waste avoided: [ghost_filtered_total] ([ghost_filtered_pct]% of all candidates)"))
+	to_chat(src, span_notice("CanAttack() calls: [canattack_calls] | Ghosts reaching CanAttack (should be ~0): spectators: [canattack_observer_rejects], lobby players: [canattack_newplayer_rejects] | Ghost leak rate: [canattack_ghost_reject_pct]%"))
 
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Show Hostile AI Metrics")
 
