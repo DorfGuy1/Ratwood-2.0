@@ -60,6 +60,7 @@
 	var/next_full_seek
 	var/lazy_seek_interval = 4
 	var/full_seek_interval = 20
+	var/use_lazy_target_scan = TRUE
 
 	cmode = 1
 	setparrytime = 30
@@ -102,7 +103,7 @@
 	if(target)
 		possible_targets = ListTargets()
 	else
-		if(search_objects)
+		if(search_objects || !use_lazy_target_scan)
 			possible_targets = ListTargets()
 		else if(world.time >= next_seek)
 			next_seek = world.time + lazy_seek_interval
