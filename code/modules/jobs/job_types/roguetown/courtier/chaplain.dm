@@ -58,7 +58,7 @@ Only when swords are drawn might your true loyalties be discovered."
 
 /datum/advclass/chaplain
 	name = "Court Chaplain"
-	tutorial = "The time most acolytes put towards reaching deeper into the ways of magic and miracle, you spent memorising catechisms, building connections and communicating the good word to those most important. Liasing between church and court as advisor and diplomat on spiritual matters, your task is to negotiate, mediate and advise the court against unpious decisions. \
+	tutorial = "The time most acolytes put towards reaching deeper into the ways of magic and miracle, you spent memorising catechisms, building connections with the Holy See and communicating the good word to those most important. Liasing between church and court as advisor and diplomat on spiritual matters, your task is to negotiate, mediate and advise the court against unpious decisions. \
 Some call you a scheming manipulator, twisting the Duke's ear towards the will of the Bishop, a spy on their behalf. Others suspect, in hushed tones, that the Duke may come to prefer your sweet whispers to the Prelate's. Perhaps you are simply drawn to the safety and luxury of court-living.\
 Only when swords are drawn might your true loyalties be discovered."
 	outfit = /datum/outfit/job/roguetown/chaplain/basic
@@ -183,10 +183,10 @@ Only when swords are drawn might your true loyalties be discovered."
 			shoes = /obj/item/clothing/shoes/roguetown/sandals
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/astrata
 	if(H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast)
+		// H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/divineblast)
 	// -- End of section for god specific bonuses --
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
-	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_WEAK, start_maxed = TRUE)	//Starts off maxed out.
+	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_1)
 
 /datum/outfit/job/roguetown/chaplain/basic/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
