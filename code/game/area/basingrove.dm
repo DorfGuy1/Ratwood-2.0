@@ -49,7 +49,7 @@
 	first_time_text = "The Grove"
 	warden_area = TRUE
 	town_area = FALSE
-	detail_text = DETAIL_TEXT_DRUIDS_GROVE
+	// detail_text = DETAIL_TEXT_DRUIDS_GROVE
 
 /area/rogue/outdoors/town/grove
 	name = "druid's grove"
@@ -65,4 +65,4 @@
 	droning_sound_night = null
 	warden_area = TRUE
 	town_area = FALSE
-	detail_text = DETAIL_TEXT_DRUIDS_GROVE
+	// detail_text = DETAIL_TEXT_DRUIDS_GROVE
