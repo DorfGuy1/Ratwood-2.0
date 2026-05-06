@@ -574,6 +574,8 @@
 	icon_state = "bush[rand(2, 4)]"
 
 /obj/structure/flora/roguegrass/bush/CanAStarPass(ID, travel_dir, caller)
+	if(occupied)
+		return FALSE
 	if(ismovableatom(caller))
 		var/atom/movable/mover = caller
 		if(mover.pass_flags & PASSGRILLE)
@@ -583,6 +585,8 @@
 	return ..()
 
 /obj/structure/flora/roguegrass/bush/CanPass(atom/movable/mover, turf/target)
+	if(occupied)
+		return FALSE
 	if(istype(mover) && (mover.pass_flags & PASSGRILLE))
 		return 1
 	if(get_dir(loc, target) == dir)
