@@ -825,7 +825,7 @@ Inquisitorial armory down here
 	var/mob/living/lastcarrier
 	var/active = FALSE
 	intdamage_factor = 0
-	var/choke_damage = 10
+	var/choke_damage = 25
 	integrity_failure = 0.01
 	embedding = null
 	sellprice = 0
@@ -1060,10 +1060,10 @@ Inquisitorial armory down here
 		return
 	headgear = M.get_item_by_slot(SLOT_HEAD)
 	var/trained = FALSE
-	var/timetobag = 8 SECONDS
+	var/timetobag = 4 SECONDS
 	if(HAS_TRAIT(user, TRAIT_BLACKBAGGER))
 		trained = TRUE
-		timetobag = 4 SECONDS
+		timetobag = 1.5 SECONDS
 	user.visible_message(span_danger("[user] goes to [trained ? "expertly" : "clumsily"] black bag [M]!"))
 	if(HAS_TRAIT(M, TRAIT_GRABIMMUNE))
 		user.visible_message(span_danger("[M] slips past [user]'s attempt to black bag them!"))
