@@ -501,11 +501,9 @@
 	skillcraft = /datum/skill/craft/smelting
 	craftdiff = 2
 
-/datum/crafting_recipe/roguetown/ironore
+/datum/crafting_recipe/roguetown/ironore/advanced
 	name = "iron ore (advanced)"
-	result = /obj/item/rogueore/iron
 	reqs = list(
 		/obj/item/alch/irondust = 2,
 		)
-	skillcraft = /datum/skill/craft/smelting
 	craftdiff = 4
