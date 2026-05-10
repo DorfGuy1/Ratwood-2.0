@@ -70,7 +70,7 @@
 		M.energy_add(10)
 	var/list/wCount = M.get_wounds()
 	if(wCount.len > 0)
-		M.heal_wounds(2) 
+		M.heal_wounds(5) // something between red and strong red. We cannot drink water 
 	if(volume > 0.99)
 		M.adjustBruteLoss(-1 * REM, 0)
 		M.adjustFireLoss(-1 * REM, 0)
