@@ -1,5 +1,8 @@
+// Add Kingsfield category tag for joinlate menu section
+#define CTAG_KINGSFIELD "ctag_kingsfield"
+
 /datum/job/roguetown/kingsfield_visitor
-	title = "Kingsfield Visitor"
+    title = "Kingsfield Visitor"
 	faction = "Station"
 	total_positions = 20
 	spawn_positions = 20
@@ -16,6 +19,7 @@
 	can_random = FALSE
 	bypass_jobban = TRUE
 	bypass_lastclass = TRUE
+	category_tags = list(CTAG_KINGSFIELD)
 
 /datum/outfit/job/roguetown/kingsfield_visitor/pre_equip(mob/living/carbon/human/H)
 	. = ..()
