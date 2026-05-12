@@ -14,7 +14,6 @@ import { Window } from '../layouts';
 type Data = {
   body: string;
   maxlen: number;
-  body_len: number;
   needs_import_confirm: boolean;
 };
 

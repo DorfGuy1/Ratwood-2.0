@@ -134,12 +134,15 @@
 		ui = new(user, src, "PaperWriterPanel", "Letter Editor")
 		ui.open()
 
-/obj/item/paper/ui_data(mob/user)
+/obj/item/paper/ui_static_data(mob/user)
 	var/list/data = list()
 	var/body = get_writer_body()
 	data["body"] = body
 	data["maxlen"] = maxlen
-	data["body_len"] = length(body)
+	return data
+
+/obj/item/paper/ui_data(mob/user)
+	var/list/data = list()
 	data["needs_import_confirm"] = writer_body_imported
 	return data
 
