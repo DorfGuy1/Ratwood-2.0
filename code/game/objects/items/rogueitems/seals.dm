@@ -4,10 +4,10 @@
 
 /obj/item/seal
 	name = "wax seal"
-	desc = "A pressed wax seal for marking official documents."
-	icon = 'icons/roguetown/items/documents.dmi'
-	icon_state = "wax_seal"
-	item_state = "wax_seal"
+	desc = "A small seal for marking official documents. It has a small loop to attach it to a keyring."
+	icon = 'icons/roguetown/items/stamps.dmi'
+	icon_state = "stamp"
+	item_state = "stamp"
 	w_class = WEIGHT_CLASS_TINY
 	var/tallowed = FALSE
 	var/seal_label = "Official Seal"
@@ -15,18 +15,52 @@
 	var/seal_is_official = TRUE
 
 /obj/item/seal/attack_right(mob/user)
-	if(user.canUseTrait(/datum/trait/blindness))
+	if(is_blind(user))
 		return TRUE
 	user.visible_message(span_notice("[user] scrapes the tallow off of [src]."))
 	tallowed = FALSE
 	update_icon()
 	return TRUE
 
+/obj/item/seal/Initialize(mapload)
+	. = ..()
+	update_icon()
+
 /obj/item/seal/update_icon()
+	icon_state = "stamp"
+	cut_overlays()
+	var/image/cap = image(icon, icon_state = "stamp_cap")
+	cap.color = seal_color
+	add_overlay(cap)
 	if(tallowed)
-		icon_state = "wax_seal_stamp"
+		var/image/wax = image(icon, icon_state = "stamp_wax")
+		wax.color = seal_color
+		add_overlay(wax)
 	else
-		icon_state = "wax_seal"
+		add_overlay(image(icon, icon_state = "stamp_bottom"))
+
+/obj/item/seal/examine(mob/user)
+	. = ..()
+	. += "<span style='color:[seal_color]'>It imprints a seal of [seal_label].</span>"
+
+/obj/item/seal/attackby(obj/item/I, mob/living/user, params)
+	if(istype(I, /obj/item/inqarticles/tallowpot))
+		var/obj/item/inqarticles/tallowpot/pot = I
+		if(!pot.loaded_tallow)
+			to_chat(user, span_warning("The [pot] has no tallow in it."))
+			return
+		if(!pot.heatedup)
+			to_chat(user, span_warning("The [pot.loaded_tallow] in [pot] is hardened. I need to heat it first."))
+			return
+		if(pot.loaded_inquisitorial_tallow)
+			to_chat(user, span_warning("I must use a Signet Ring for Inquisitorial Missives"))
+			return
+		tallowed = TRUE
+		update_icon()
+		to_chat(user, span_notice("I coat [src] with melted [pot.loaded_tallow]."))
+		return
+
+	return ..()
 
 /obj/item/seal/custom
 	name = "blank custom seal"
@@ -40,12 +74,12 @@
 	if(customized)
 		to_chat(user, span_warning("[src] is already engraved and cannot be changed."))
 		return
-	if(user.canUseTrait(/datum/trait/blindness))
+	if(is_blind(user))
 		return
 	var/new_label = stripped_input(user, "Engrave your seal text (once only):", "Custom Seal Engraving", "", 64)
 	if(!new_label)
 		return
-	new_label = trim(new_label)
+	new_label = trim(STRIP_HTML_SIMPLE(new_label, 64))
 	if(!length(new_label))
 		to_chat(user, span_warning("The engraving must contain text."))
 		return
@@ -80,7 +114,7 @@
 // Seal of the Crown
 /obj/item/seal/crown
 	name = "crown seal"
-	seal_label = "The Crown of Rockhill"
+	seal_label = "The Crown of Rotwood Vale"
 	seal_color = "#8b6914"
 
 // Steward's seal
@@ -104,25 +138,25 @@
 // Merchant's seal
 /obj/item/seal/merchant
 	name = "merchant's seal"
-	seal_label = "The Merchant House"
+	seal_label = "The Rotwood Vale Official Merchant"
 	seal_color = "#c9a84c"
 
 // Nightmaster/Mistress seal
 /obj/item/seal/nightmaster
 	name = "night seal"
-	seal_label = "The Night's Authority"
+	seal_label = "The Nightmaster's Authority"
 	seal_color = "#2a2a2a"
 
 // Guildmaster's seal
 /obj/item/seal/guildmaster
 	name = "guild master's seal"
-	seal_label = "The Guild"
+	seal_label = "The Guildmaster of Rotwood Vale"
 	seal_color = "#8b6914"
 
 // Prelate's seal
 /obj/item/seal/prelate
 	name = "prelate's seal"
-	seal_label = "High Prelate of the Vale"
+	seal_label = "High Prelate of Rotwood Vale"
 	seal_color = "#d4af37"
 
 // Court Magos seal
@@ -134,23 +168,23 @@
 // Master Warden's seal
 /obj/item/seal/master_warden
 	name = "master warden's seal"
-	seal_label = "Master of the Wardens of the Vale"
+	seal_label = "Master of the Wardens of Rotwood Vale"
 	seal_color = "#2d5a2d"
 
 // Seneschal's seal
 /obj/item/seal/seneschal
 	name = "seneschal's seal"
-	seal_label = "The Seneschal of The Keep"
+	seal_label = "The Seneschal of The Keep of Rotwood Vale"
 	seal_color = "#8b0000"
 
 // Hand of the Ruler seal
 /obj/item/seal/hand
 	name = "hand's seal"
-	seal_label = "The Hand of the Crown"
+	seal_label = "The Hand of the Crown of Rotwood Vale"
 	seal_color = "#8b6914"
 
 // Knight Captain's seal
 /obj/item/seal/knight_captain
 	name = "knight captain's seal"
-	seal_label = "The Knight Captain's Office"
+	seal_label = "The Knight Captain of Rotwood Vale"
 	seal_color = "#1a1a1a"

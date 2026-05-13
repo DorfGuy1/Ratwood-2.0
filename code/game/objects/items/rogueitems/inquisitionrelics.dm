@@ -678,7 +678,7 @@ Inquisitorial armory down here
 
 /obj/item/inqarticles/tallowpot
 	name = "tallowpot"
-	desc = "A small metal pot meant for holding waxes or melted redtallow. Convenient for coating signet rings and making an imprint. The warmth of a torch, lamptern, or candle should be enough to melt the redtallow for stamping writs."
+	desc = "A small metal pot meant for holding waxes or melted tallow. Convenient for coating signet rings and making an imprint. The warmth of a torch, lamptern, or candle should be enough to melt tallow for stamping writs, especially Inquisitorial Tallow."
 	icon = 'icons/roguetown/items/misc.dmi'
 	icon_state = "tallowpot"
 	item_state = "tallowpot"
@@ -694,7 +694,8 @@ Inquisitorial armory down here
 	w_class = WEIGHT_CLASS_SMALL
 	intdamage_factor = 0
 	embedding = null
-	var/tallow
+	var/obj/item/reagent_containers/food/snacks/tallow/loaded_tallow
+	var/loaded_inquisitorial_tallow = FALSE
 	var/remaining
 	var/heatedup
 	var/messageshown = 1
@@ -714,27 +715,29 @@ Inquisitorial armory down here
 		remaining = max(remaining - -20, 0)
 		messageshown = 0
 	else
-		if(tallow)
+		if(loaded_tallow)
 			if(!messageshown)
-				visible_message(span_info("The redtallow in [src] hardens again."))
+				visible_message(span_info("The [loaded_tallow] in [src] hardens again."))
 				messageshown = 1
 			update_icon()
 	if(remaining == 0)
-		qdel(tallow)
-		tallow = initial(tallow)
+		qdel(loaded_tallow)
+		loaded_tallow = initial(loaded_tallow)
+		loaded_inquisitorial_tallow = FALSE
 		update_icon()
 
 /obj/item/inqarticles/tallowpot/attacked_by(obj/item/I, mob/living/user)
 	. = ..()
-	if(istype(I, /obj/item/reagent_containers/food/snacks/tallow/red))
-		if(!tallow)
-			var/obj/item/reagent_containers/food/snacks/tallow/red/Q = I
-			tallow = Q
+	if(istype(I, /obj/item/reagent_containers/food/snacks/tallow/soft) || istype(I, /obj/item/reagent_containers/food/snacks/tallow/red))
+		if(!loaded_tallow)
+			var/obj/item/reagent_containers/food/snacks/tallow/Q = I
+			loaded_tallow = Q
+			loaded_inquisitorial_tallow = istype(I, /obj/item/reagent_containers/food/snacks/tallow/red)
 			user.transferItemToLoc(Q, src, TRUE)
 			remaining = 300
 			update_icon()
 		else
-			to_chat(user, span_info("The [src] already has redtallow in it."))
+			to_chat(user, span_info("The [src] already has [loaded_tallow] in it."))
 
 	if(istype(I, /obj/item/flashlight/flare/torch/))
 		heatedup = 28
@@ -747,21 +750,38 @@ Inquisitorial armory down here
 		update_icon()
 
 	if(istype(I, /obj/item/clothing/ring/signet))
-		if(tallow && heatedup)
+		if(loaded_tallow && heatedup)
 			var/obj/item/clothing/ring/signet/ring = I
 			ring.tallowed = TRUE
 			ring.update_icon()
 
 	if(istype(I, /obj/item/seal))
-		if(tallow && heatedup)
+		if(loaded_tallow && loaded_inquisitorial_tallow)
+			to_chat(user, span_warning("I must use a Signet Ring for Inquisitorial Missives"))
+			return
+		if(loaded_tallow && heatedup)
 			var/obj/item/seal/seal = I
 			seal.tallowed = TRUE
 			seal.update_icon()
 
+/obj/item/inqarticles/tallowpot/examine(mob/user)
+	. = ..()
+	if(!loaded_tallow)
+		. += span_info("It is empty.")
+		return
+	if(loaded_inquisitorial_tallow)
+		. += span_info("It currently contains Inquisitorial Tallow.")
+	else
+		. += span_info("It currently contains soft tallow.")
+	if(heatedup)
+		. += span_notice("The tallow is melted and ready for stamping.")
+	else
+		. += span_warning("The tallow is hardened and must be reheated before stamping.")
+
 
 /obj/item/inqarticles/tallowpot/update_icon()
 	. = ..()
-	if(tallow)
+	if(loaded_tallow)
 		icon_state = "[initial(icon_state)]_filled"
 		if(heatedup)
 			icon_state = "[initial(icon_state)]_melted"
@@ -894,7 +914,7 @@ Inquisitorial armory down here
 /obj/item/inqarticles/garrote/attack_self(mob/user)
 	if(obj_broken)
 		to_chat(user, span_warning("It's useless now, although.."))
-		to_chat(user, span_notice("I could rethread it with more cordage."))
+		to_chat(user, span_notice("I could rethread it with more cordage or rope."))
 		return
 	if(wielded)
 		ungrip(user, FALSE)
@@ -940,8 +960,8 @@ Inquisitorial armory down here
 
 /obj/item/inqarticles/garrote/attacked_by(obj/item/I, mob/living/user)
 	. = ..()
-	if(istype(I, /obj/item/rope/inqarticles/inquirycord))
-		user.visible_message(span_warning("[user] starts to rethread the [src] using the [I]."))
+	if(istype(I, /obj/item/rope/inqarticles/inquirycord) || (istype(I, /obj/item/rope) && !istype(I, /obj/item/rope/chain)))
+		user.visible_message(span_warning("[user] starts to rethread the [src] using [I]."))
 		if(do_after(user, 8 SECONDS))
 			qdel(I)
 			obj_broken = FALSE

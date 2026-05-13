@@ -47,6 +47,11 @@
 		mailedto = null
 		update_icon()
 		return
+	if(seal_label && !seal_broken)
+		seal_broken = TRUE
+		update_icon_state()
+		to_chat(user, span_notice("I break the wax seal on [src]."))
+		return
 	if(!open)
 		attack_right(user)
 		return
@@ -63,6 +68,9 @@
 	return
 
 /obj/item/paper/scroll/attack_right(mob/user)
+	if(seal_label && !seal_broken)
+		to_chat(user, span_warning("The wax seal is still intact. I need to unseal it first."))
+		return
 	if(open)
 		slot_flags |= ITEM_SLOT_HIP
 		open = FALSE
@@ -83,6 +91,12 @@
 		throw_range = 7
 		return
 	throw_range = initial(throw_range)
+	if(seal_label && !seal_broken)
+		icon_state = "slip_sealed"
+		open = FALSE
+		name = "sealed scroll"
+		slot_flags |= ITEM_SLOT_HIP
+		return
 	if(open)
 		if(info)
 			icon_state = "scrollwrite"
@@ -293,9 +307,9 @@
 		return
 	if(in_range(user, src) || isobserver(user))
 		if(waxed)
-			to_chat(user, span_notice("This writ has been signed by [signee.real_name], sealed with redtallow, and can now be mailed back through the Hermes. The Archbishop will be pleased with this one."))
+			to_chat(user, span_notice("This writ has been signed by [signee.real_name], sealed with Inquisitorial Tallow, and can now be mailed back through the Hermes. The Archbishop will be pleased with this one."))
 		if(signed)
-			to_chat(user, span_notice("This writ has been signed by [signee.real_name], and can now be mailed back through the Hermes. Sealing it with redtallow would garner more favor from the Archbishop."))
+			to_chat(user, span_notice("This writ has been signed by [signee.real_name], and can now be mailed back through the Hermes. Sealing it with Inquisitorial Tallow would garner more favor from the Archbishop."))
 		else if(signee)
 			to_chat(user, span_notice("This writ is intended to be signed by [signee.real_name]."))
 		else
@@ -428,6 +442,10 @@
 		signee = user
 
 /obj/item/paper/inqslip/attacked_by(obj/item/I, mob/living/user)
+	if(istype(I, /obj/item/seal))
+		to_chat(user, span_warning("I must use a Signet Ring for Inquisitorial Missives"))
+		return
+
 	if(istype(I, /obj/item/clothing/ring/signet))
 		var/obj/item/clothing/ring/signet/S = I
 		if(waxed)

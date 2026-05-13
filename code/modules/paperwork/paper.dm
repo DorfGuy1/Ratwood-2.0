@@ -86,6 +86,195 @@
 	var/cached_mailer
 	var/cached_mailedto
 	var/trapped
+	/// Raw text source used by the tgui writer panel.
+	var/writer_body
+	/// True when writer_body was derived from existing HTML instead of previously authored raw text.
+	var/writer_body_imported = FALSE
+	/// Append-only draft text used by the tgui writer panel input box.
+	var/writer_draft = ""
+	/// Optional font override selected in the tgui writer panel.
+	var/writer_font = "default"
+	/// Whether this document has been signed via the writer panel.
+	var/writer_signed = FALSE
+
+/obj/item/paper/proc/get_writer_tool(mob/living/carbon/human/user)
+	if(!user)
+		return null
+	var/obj/item/P = user.get_active_held_item()
+	if(istype(P, /obj/item/natural/thorn) || istype(P, /obj/item/natural/feather))
+		return P
+	return null
+
+/obj/item/paper/proc/sanitize_writer_font(font_name)
+	if(!istext(font_name))
+		return "default"
+	var/list/allowed_fonts = list(
+		"default",
+		FOUNTAIN_PEN_FONT,
+		"Times New Roman",
+		"Garamond",
+		"Book Antiqua",
+		"Courier New",
+		"Verdana",
+	)
+	if(!(font_name in allowed_fonts))
+		return "default"
+	return font_name
+
+/obj/item/paper/proc/append_writer_chunk(mob/living/carbon/human/user, sign_after = FALSE)
+	var/obj/item/P = get_writer_tool(user)
+	if(!can_use_writer(user, P))
+		to_chat(user, span_warning("I need a feather or thorn in hand to write."))
+		return FALSE
+
+	var/chunk_input = writer_draft || ""
+
+	if(!length(chunk_input) && !sign_after)
+		to_chat(user, span_warning("I have nothing to add."))
+		return FALSE
+
+	var/chunk_html = null
+	if(length(chunk_input))
+		chunk_html = parsepencode(chunk_input, P, user, FALSE, sanitize_writer_font(writer_font))
+		if(!chunk_html)
+			to_chat(user, span_warning("I have nothing to add."))
+			return FALSE
+
+	if(chunk_html)
+		var/new_len = length(info) + length(chunk_html)
+		if(info)
+			new_len += 4 // <br>
+		if(new_len > maxlen)
+			to_chat(user, span_warning("Too long. Try again."))
+			return FALSE
+
+	if(chunk_html)
+		if(info)
+			info += "<br>[chunk_html]"
+		else
+			info = chunk_html
+
+	writer_draft = ""
+	writer_body = null
+	writer_body_imported = FALSE
+	if(sign_after)
+		writer_signed = TRUE
+
+	updateinfolinks()
+	update_icon_state()
+	playsound(src, 'sound/items/write.ogg', 100, FALSE)
+	if(sign_after)
+		to_chat(user, span_notice("I sign [src]."))
+	else
+		to_chat(user, span_notice("I add writing to [src]."))
+	return TRUE
+
+/obj/item/paper/proc/build_writer_preview(mob/living/carbon/human/user)
+	var/preview = info || ""
+	if(!length(writer_draft))
+		return preview
+
+	var/obj/item/P = get_writer_tool(user)
+	var/saved_fields = fields
+	var/chunk_preview = parsepencode(writer_draft, P, user, FALSE, sanitize_writer_font(writer_font))
+	fields = saved_fields
+	if(!chunk_preview)
+		return preview
+
+	if(length(preview))
+		return "[preview]<br>[chunk_preview]"
+	return chunk_preview
+
+/obj/item/paper/proc/get_writer_body()
+	if(isnull(writer_body))
+		if(info)
+			writer_body = strip_html_simple(info, maxlen)
+			writer_body_imported = findtext(info, "<") ? TRUE : FALSE
+		else
+			writer_body = ""
+			writer_body_imported = FALSE
+	return writer_body
+
+/obj/item/paper/proc/can_use_writer(mob/living/carbon/human/user, obj/item/P)
+	if(!user)
+		return FALSE
+	if(is_blind(user))
+		return FALSE
+	if(!user.can_read(src))
+		return FALSE
+	if(mailer)
+		return FALSE
+	if(!in_range(src, user) && loc != user && loc.loc != user)
+		return FALSE
+	if(!P)
+		P = user.get_active_held_item()
+	if(!istype(P, /obj/item/natural/thorn) && !istype(P, /obj/item/natural/feather))
+		return FALSE
+	if(istype(src, /obj/item/paper/scroll))
+		var/obj/item/paper/scroll/S = src
+		if(!S.open)
+			return FALSE
+	return TRUE
+
+/obj/item/paper/proc/open_writer_panel(mob/living/carbon/human/user, obj/item/P)
+	if(!can_use_writer(user, P))
+		return FALSE
+	ui_interact(user)
+	return TRUE
+
+/obj/item/paper/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "PaperWriterPanel", "Letter Editor")
+		ui.set_autoupdate(FALSE)
+		ui.open()
+
+/obj/item/paper/ui_static_data(mob/user)
+	var/list/data = list()
+	data["maxlen"] = maxlen
+	data["font"] = writer_font
+	data["standard_font"] = FOUNTAIN_PEN_FONT
+	data["fonts"] = list("default", FOUNTAIN_PEN_FONT, "Times New Roman", "Garamond", "Book Antiqua", "Courier New", "Verdana")
+	return data
+
+/obj/item/paper/ui_data(mob/user)
+	var/list/data = list()
+	data["draft"] = writer_draft
+	data["font"] = writer_font
+	data["signed"] = writer_signed
+	data["needs_import_confirm"] = FALSE
+	data["preview_html"] = build_writer_preview(user)
+	data["has_existing_text"] = length(info) > 0
+	return data
+
+/obj/item/paper/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	if(..())
+		return TRUE
+
+	var/mob/living/carbon/human/user = ui.user
+	if(!user)
+		return TRUE
+
+	switch(action)
+		if("update_draft")
+			var/new_draft = params["draft"] || ""
+			writer_draft = copytext(new_draft, 1, maxlen + 1)
+			writer_font = sanitize_writer_font(params["font"])
+			return TRUE
+
+		if("sign")
+			append_writer_chunk(user, TRUE)
+			return TRUE
+
+		if("clear")
+			writer_draft = ""
+			return TRUE
+
+		if("close")
+			ui.close()
+			return TRUE
+
+	return FALSE
 
 /obj/item/paper/examine()
 	. = ..()
@@ -147,6 +336,9 @@
 		return
 	name = initial(name)
 	throw_range = initial(throw_range)
+	if(seal_label && !seal_broken)
+		icon_state = "slip_sealed"
+		return
 	if(info)
 		icon_state = "paperwrite"
 		return
@@ -166,21 +358,28 @@
 		if(info)
 			. += "<a href='?src=[REF(src)];read=1'>Read</a>"
 	else
-		. += "It's from [mailer], addressed to [mailedto].</a>"
+		. += "It's from [mailer], addressed to [mailedto]."
+		if(isobserver(user) && IsAdminGhost(user))
+			. += "<a href='?src=[REF(src)];read=1'>Read (Admin)</a>"
 
 /obj/item/paper/proc/read(mob/user)
-	if(!user.client || !user.hud_used)
+	if(!user.client)
 		return
-	if(!user.hud_used.reads)
+	var/admin_observer = isobserver(user) && IsAdminGhost(user)
+	if(!user.hud_used)
+		if(!admin_observer)
+			return
+	else if(!admin_observer && !user.hud_used.reads)
 		return
-	if(!user.can_read(src))
+	if(!admin_observer && !user.can_read(src))
 		if(info)
 			user.adjust_experience(/datum/skill/misc/reading, 2, FALSE)
 		return
-	if(mailer)
+	if(!admin_observer && mailer)
 		return
 	if(seal_label && !seal_broken)
-		seal_broken = TRUE
+		to_chat(user, span_warning("The wax seal is still intact. I need to unseal it first."))
+		return
 	if(in_range(user, src) || isobserver(user))
 		user << browse_rsc('html/book.png')
 		var/body_border_css = window_rim_style ? "box-sizing:border-box;[window_rim_style]" : ""
@@ -242,6 +441,11 @@
 		victim.adjust_fire_stacks(15)
 		victim.ignite_mob()
 		victim.visible_message(span_danger("[user] bursts into flames upon reading [src]!"))
+	if(seal_label && !seal_broken)
+		seal_broken = TRUE
+		update_icon_state()
+		to_chat(user, span_notice("I break the wax seal on [src]."))
+		return
 	read(user)
 	if(rigged && (SSevents.holidays && SSevents.holidays[APRIL_FOOLS]))
 		if(!spam_flag)
@@ -296,6 +500,8 @@
 
 /obj/item/paper/proc/clearpaper()
 	info = null
+	writer_body = ""
+	writer_body_imported = FALSE
 	stamps = null
 	seal_label = null
 	seal_color = initial(seal_color)
@@ -307,16 +513,23 @@
 	update_icon_state()
 
 
-/obj/item/paper/proc/parsepencode(t, obj/item/P, mob/user, iscrayon = 0)
+/obj/item/paper/proc/parsepencode(t, obj/item/P, mob/user, iscrayon = 0, custom_font = null)
 	if(length(t) < 1)		//No input means nothing needs to be parsed
 		return
 
+	// Writer panel no longer supports large (^text^) or field (%f/%field) tokens.
+	t = replacetext(t, "^", "")
+	t = replacetext(t, regex("%f(?:ield)?(?=\\s|$)", "igm"), "")
+
 	t = parsemarkdown(t, user, iscrayon)
+	var/pen_font = FOUNTAIN_PEN_FONT
+	if(custom_font && custom_font != "default")
+		pen_font = custom_font
 
 	if(istype(P, /obj/item/natural/thorn))
-		t = "<font face=\"[FOUNTAIN_PEN_FONT]\" color=#862f20>[t]</font>"
+		t = "<font face=\"[pen_font]\" color=#862f20>[t]</font>"
 	else if(istype(P, /obj/item/natural/feather))
-		t = "<font face=\"[FOUNTAIN_PEN_FONT]\" color=#14103f>[t]</font>"
+		t = "<font face=\"[pen_font]\" color=#14103f>[t]</font>"
 
 	// Count the fields
 	var/laststart = 1
@@ -350,9 +563,7 @@
 		|text| : Centers the text.<br>
 		**text** : Makes the text <b>bold</b>.<br>
 		*text* : Makes the text <i>italic</i>.<br>
-		^text^ : Increases the <font size = \"4\">size</font> of the text.<br>
 		%s : Inserts a signature of your name in a foolproof way.<br>
-		%f : Inserts an invisible field which lets you start type from there. Useful for forms.<br>
 		((text)) : Decreases the <font size = \"1\">size</font> of the text.<br>
 		* item : An unordered list item.<br>
 		&nbsp;&nbsp;* item: An unordered list child item.<br>
@@ -375,7 +586,8 @@
 			user << browse(null, "window=reading")
 
 	var/literate = usr.is_literate()
-	if(!usr.canUseTopic(src, BE_CLOSE, literate))
+	var/admin_observer = isobserver(usr) && IsAdminGhost(usr)
+	if(!admin_observer && !usr.canUseTopic(src, BE_CLOSE, literate))
 		return
 
 	if(href_list["read"])
@@ -420,6 +632,8 @@
 				testing("[length(info)]")
 				testing("[findtext(info, "\n")]")
 				updateinfolinks()
+			writer_body = null
+			writer_body_imported = FALSE
 			playsound(src, 'sound/items/write.ogg', 100, FALSE)
 			format_browse(info_links, usr)
 			update_icon_state()
@@ -446,7 +660,7 @@
 			to_chat(user, "<span class='warning'>[src] is full of verba.</span>")
 			return
 		if(user.can_read(src))
-			format_browse(info_links, user)
+			open_writer_panel(user, P)
 			update_icon_state()
 			return
 		else
@@ -468,7 +682,8 @@
 			seal_color = seal.seal_color
 			seal_is_official = seal.seal_is_official
 			seal_broken = FALSE
-			user.visible_message(span_notice("[user] presses [seal] onto [src], sealing it with [seal.seal_label]."))
+			update_icon()
+			user.visible_message(span_notice("[user] seals [src] with [seal]."))
 			return
 		else
 			if(!seal.tallowed)
@@ -485,11 +700,12 @@
 		if(ring.tallowed && info && !seal_label)
 			ring.tallowed = FALSE
 			ring.update_icon()
-			seal_label = "Lord Inquisitor of the Otavan Mission in The Vale"
-			seal_color = "#6b0000"
-			seal_is_official = TRUE
+			seal_label = ring.seal_label
+			seal_color = ring.seal_color
+			seal_is_official = ring.seal_is_official
 			seal_broken = FALSE
-			user.visible_message(span_notice("[user] presses [ring] onto [src], sealing it with an inquisitorial seal."))
+			update_icon()
+			user.visible_message(span_notice("[user] seals [src] with [ring]."))
 			return
 		else
 			if(!ring.tallowed)
