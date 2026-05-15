@@ -86,7 +86,6 @@
 	var/folded_icon_state = "parchment_folded"
 	var/sealed_icon_state = "parchment_sealed"
 	var/sealed_tint_icon_state = "parchment_sealed_tint"
-	var/sealed_tint_icon_state = "parchment_sealed_tint"
 	///CSS applied to <body> when reading — used by fax letters to show a rim on the window border.
 	var/window_rim_style
 
