@@ -2,10 +2,12 @@
 	name = "Ooze"
 	id = "ooze"
 	desc = "<b>Ooze</b><br>\
-	Oozes are gelatinous lifeforms formed from liquid that submerged disembodied lux. \
-	Boneless and so different from the rest of Psydonia's species - they have recently started appearing in places of civilization. \
-	Supposedly - they come from deeper dungeons, and naturally manifest within humid environments. \
-	However, their shapeshifting nature has also resulted in their innate fragiliy.<br>\
+	In the dungeons and ruins of the duchy of Rockhill, corpses both ancient and fresh litter the ground. \
+	With the appearance of Rot in our realm there was a reactionary substance formed by the natural world, the Ooze. \
+	Taking the form of unintelligent slimes that act as agents of renewal, they digest dead remains and neutralize the Rot where it can be found. \
+	Tied to no singular god they seem to be the planet’s immune system come to life, yet in the cursed loam of the vale there has been a unique result at times.. \
+	When an ooze consumes a corpse fresh, mummified, or skeletal, they retain the memories and skills of the fallen adventurers or commoners that litter the ruins. \
+	Taking on new life, they adopt the mannerisms of this formative meal even if they can realize and mentally separate from their template, although many think of themselves as these dead peoples, insisting this is but a second chance at life..<br>\
 	(+1 CON | + WIL | -1 INT) <br>\
 	Easy Dismember | Limb Regrowth | No Bones | No Blood</b></span><br><br>"
 
