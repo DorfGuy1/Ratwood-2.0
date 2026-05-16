@@ -187,3 +187,9 @@
 	name = "knight captain's seal"
 	seal_label = "The Knight Captain of Rotwood Vale"
 	seal_color = "#7e1111"
+
+// Watch Captain's seal
+/obj/item/seal/watchcaptain
+	name = "watch captain's seal"
+	seal_label = "The Watch Captain of Rotwood Vale"
+	seal_color = "#1e4a7e"
