@@ -1,3 +1,8 @@
+// Only show the 'Read' prompt if the scroll is open and has info
+/obj/item/paper/scroll/examine(mob/user)
+       . = ..()
+       if(info && open)
+	       . += "<a href='?src=[REF(src)];read=1'>Read</a>"
 /obj/item/paper/scroll
 	name = "papyrus"
 	icon_state = "scroll"
@@ -322,11 +327,16 @@
 		else
 			to_chat(user, span_notice("This writ has not yet been signed."))
 
+
 /obj/item/paper/inqslip/accusation
 	name = "accusation"
 	desc = "A writ of religious suspicion, printed on Otavan parchment: one signed not in ink, but blood. Press the accusation against your own bleeding wound in order to obtain a signature. Then pair it with an INDEXER full of the accused's blood. Once done, it is ready to be mailed back to Otava. Fold and seal it, it's only proper."
 	marquevalue = 4
 	sliptype = 0
+
+	examine(mob/user)
+		 return span_notice(desc)
+
 
 /obj/item/paper/inqslip/confession
 	name = "confession"
@@ -335,9 +345,16 @@
 	desc = "A writ of religious guilt, printed on Otavan parchment: one signed not in ink, but blood. Press the confession against a suspect's bleeding wound, in order to obtain their signature. Once done, it is ready to be mailed back to Otava. Fold and seal it, it's only proper."
 	sliptype = 2
 
+	examine(mob/user)
+		 return span_notice(desc)
+
+
 /obj/item/paper/inqslip/arrival
 	name = "arrival slip"
 	desc = "A writ of arrival, printed on Otavan parchment: one signed not in ink, but blood. Intended for one person and one person only. Press the slip against one's own weeping wounds in order to obtain a fitting signature. Once done, it is ready to be mailed back to Otava."
+
+	examine(mob/user)
+		 return span_notice(desc)
 
 /obj/item/paper/inqslip/arrival/ortho
 	marquevalue = 4
