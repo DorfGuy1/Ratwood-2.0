@@ -1,6 +1,11 @@
 // Shared scroll state must be declared before any procs use it.
 /obj/item/paper/scroll
 	var/open = FALSE
+	open_empty_icon_state = "scroll"
+	open_written_icon_state = "scrollwrite"
+	folded_icon_state = "scroll_folded"
+	sealed_icon_state = "scroll_sealed"
+	sealed_tint_icon_state = "scroll_sealed_tint"
 
 // Only show the 'Read' prompt if the scroll is open and has info
 /obj/item/paper/scroll/examine(mob/user)
@@ -21,9 +26,6 @@
 
 /obj/item/paper/scroll/Initialize(mapload)
 	. = ..()
-	open_empty_icon_state = "scroll"
-	folded_icon_state = "scroll_folded"
-	update_icon_state()
 
 /obj/item/paper/scroll/attackby(obj/item/P, mob/living/carbon/human/user, params)
 	if(istype(P, /obj/item/natural/thorn) || istype(P, /obj/item/natural/feather))
