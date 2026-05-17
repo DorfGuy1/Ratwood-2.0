@@ -30,9 +30,9 @@
 	effect = /obj/effect/temp_visual/songs/inspiration_dirget2
 	debuff_to_apply = /datum/status_effect/debuff/song/pestilentpiper
 	debuffs_to_apply_by_level = list(
-		BARD_T1 = /datum/status_effect/debuff/song/pestilentpiper,
-		BARD_T2 = /datum/status_effect/debuff/song/pestilentpiper/t2,
-		BARD_T3 = /datum/status_effect/debuff/song/pestilentpiper/t3,
+		/datum/status_effect/debuff/song/pestilentpiper,
+		/datum/status_effect/debuff/song/pestilentpiper/t2,
+		/datum/status_effect/debuff/song/pestilentpiper/t3,
 	)
 
 

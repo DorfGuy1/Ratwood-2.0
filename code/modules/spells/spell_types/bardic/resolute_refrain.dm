@@ -21,9 +21,9 @@
 	effect = /obj/effect/temp_visual/songs/inspiration_melodyt1
 	buff_to_apply = /datum/status_effect/buff/song/resolute_refrain
 	buffs_to_apply_by_level = list(
-		BARD_T1 = /datum/status_effect/buff/song/resolute_refrain,
-		BARD_T2 = /datum/status_effect/buff/song/resolute_refrain/t2,
-		BARD_T3 = /datum/status_effect/buff/song/resolute_refrain/t3,
+		/datum/status_effect/buff/song/resolute_refrain,
+		/datum/status_effect/buff/song/resolute_refrain/t2,
+		/datum/status_effect/buff/song/resolute_refrain/t3,
 	)
 
 /atom/movable/screen/alert/status_effect/buff/song/resolute_refrain

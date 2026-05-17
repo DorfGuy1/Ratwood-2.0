@@ -24,9 +24,9 @@
 	effect = /obj/effect/temp_visual/songs/inspiration_dirget1
 	debuff_to_apply = /datum/status_effect/debuff/song/discordant_dirge
 	debuffs_to_apply_by_level = list(
-		BARD_T1 = /datum/status_effect/debuff/song/discordant_dirge,
-		BARD_T2 = /datum/status_effect/debuff/song/discordant_dirge/t2,
-		BARD_T3 = /datum/status_effect/debuff/song/discordant_dirge/t3,
+		/datum/status_effect/debuff/song/discordant_dirge,
+		/datum/status_effect/debuff/song/discordant_dirge/t2,
+		/datum/status_effect/debuff/song/discordant_dirge/t3,
 	)
 
 /atom/movable/screen/alert/status_effect/debuff/song/discordant_dirge

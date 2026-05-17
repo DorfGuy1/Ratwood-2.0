@@ -25,9 +25,9 @@
 	effect = /obj/effect/temp_visual/songs/inspiration_melodyt1
 	buff_to_apply = /datum/status_effect/buff/song/intellectual_interval
 	buffs_to_apply_by_level = list(
-		BARD_T1 = /datum/status_effect/buff/song/intellectual_interval,
-		BARD_T2 = /datum/status_effect/buff/song/intellectual_interval/t2,
-		BARD_T3 = /datum/status_effect/buff/song/intellectual_interval/t3,
+		/datum/status_effect/buff/song/intellectual_interval,
+		/datum/status_effect/buff/song/intellectual_interval/t2,
+		/datum/status_effect/buff/song/intellectual_interval/t3,
 	)
 
 

@@ -24,9 +24,9 @@
 	effect = /obj/effect/temp_visual/songs/inspiration_melodyt2
 	buff_to_apply = /datum/status_effect/buff/song/recovery
 	buffs_to_apply_by_level = list(
-		BARD_T1 = /datum/status_effect/buff/song/recovery,
-		BARD_T2 = /datum/status_effect/buff/song/recovery/t2,
-		BARD_T3 = /datum/status_effect/buff/song/recovery/t3,
+		/datum/status_effect/buff/song/recovery,
+		/datum/status_effect/buff/song/recovery/t2,
+		/datum/status_effect/buff/song/recovery/t3,
 	)
 
 
