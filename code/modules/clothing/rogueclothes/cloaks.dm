@@ -873,6 +873,7 @@
 	min_cold_protection_temperature = BODYTEMP_NORMAL_MIN
 	heat_protection = null
 	max_heat_protection_temperature = BODYTEMP_NORMAL_MAX
+	dropshrink = null
 
 /obj/item/clothing/cloak/apron/blacksmith
 	name = "leather apron"
@@ -1580,6 +1581,7 @@
 	icon_state = "bksash"
 	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
+	dropshrink = null
 
 /obj/item/clothing/under/roguetown/platelegs/blk
 	name = "blacksteel legs"

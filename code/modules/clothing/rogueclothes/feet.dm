@@ -185,6 +185,7 @@
 	icon_state = "sandals"
 	item_state = "sandals"
 	nudist_approved = TRUE
+	dropshrink = null
 
 /obj/item/clothing/shoes/roguetown/sandals/aalloy
 	name = "decrepit sandals"

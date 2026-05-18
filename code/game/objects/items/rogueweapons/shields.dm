@@ -113,6 +113,7 @@
 	anvilrepair = /datum/skill/craft/carpentry
 	coverage = 30
 	smeltresult = /obj/item/ash
+	dropshrink = 0.8
 
 /obj/item/rogueweapon/shield/attack_right(mob/user)
 	if(overlays.len)

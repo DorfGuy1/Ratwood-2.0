@@ -123,6 +123,7 @@ Here because they're unused elsewhere.
 	icon = 'icons/roguetown/clothing/special/overseer/overseer.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	w_class = WEIGHT_CLASS_BULKY
+	dropshrink = null
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/inq/arbiter
 	name = "arbiter gambeson"
@@ -132,6 +133,7 @@ Here because they're unused elsewhere.
 	icon = 'icons/roguetown/clothing/special/overseer/overseer.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	sleeved = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
+	dropshrink = null
 
 /obj/item/clothing/suit/roguetown/armor/plate/scale/inqcoat/arbiter
 	name = "arbiter brigandine"
@@ -143,6 +145,7 @@ Here because they're unused elsewhere.
 	sleeved = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	boobed = TRUE
 	is_silver = TRUE
+	dropshrink = null
 
 /obj/item/clothing/gloves/roguetown/otavan/psygloves/arbiter
 	name = "arbiter gloves"
@@ -151,10 +154,12 @@ Here because they're unused elsewhere.
 	item_state = "overseergloves"
 	icon = 'icons/roguetown/clothing/special/overseer/overseer.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
+	dropshrink = null
 
 /obj/item/clothing/gloves/roguetown/otavan/psygloves/arbiter/vice
 	icon_state = "viceseergloves"
 	item_state = "viceseergloves"
+	dropshrink = null
 
 /obj/item/clothing/head/roguetown/helmet/arbiter
 	name = "arbiter mask"
@@ -179,6 +184,7 @@ Here because they're unused elsewhere.
 	item_state = "viceseermask"
 	is_silver = TRUE
 	smeltresult = /obj/item/ingot/silver
+	dropshrink = null
 
 //The intent of the trait was to frighten heretics, if they saw the user with it present.
 //Alas...
@@ -210,6 +216,7 @@ Here because they're unused elsewhere.
 	body_parts_covered = FACE|EARS|MOUTH|NECK
 	slot_flags = ITEM_SLOT_MASK
 	sewrepair = TRUE
+	dropshrink = null
 
 /obj/item/clothing/under/roguetown/heavy_leather_pants/arbiter
 	name = "heavy trousers"
@@ -219,6 +226,7 @@ Here because they're unused elsewhere.
 	icon = 'icons/roguetown/clothing/special/overseer/overseer.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	sleeved = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
+	dropshrink = null
 
 /obj/item/clothing/suit/roguetown/shirt/undershirt/arbiter
 	icon_state = "overseershirt"
@@ -226,3 +234,4 @@ Here because they're unused elsewhere.
 	mob_overlay_icon = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	sleeved = 'icons/roguetown/clothing/special/overseer/onmob/overseer.dmi'
 	color = null
+	dropshrink = null

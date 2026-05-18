@@ -622,6 +622,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST, BCLASS_STAB)
 	max_integrity = 250
 	smeltresult = /obj/item/ingot/iron
+	dropshrink = null
 
 
 	//----------------- INFAREDBARON/HATS.DM ---------------------
@@ -637,3 +638,4 @@
 	flags_inv = HIDEHAIR
 	smeltresult = /obj/item/ingot/steel
 	emote_environment = 3
+	dropshrink = null

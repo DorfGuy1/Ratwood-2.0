@@ -12,6 +12,7 @@
 	r_sleeve_status = SLEEVE_NORMAL
 	l_sleeve_status = SLEEVE_NORMAL
 	experimental_inhand = FALSE
+	dropshrink = null
 
 /obj/item/clothing/suit/roguetown/shirt/robe/astrata
 	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_SHIRT|ITEM_SLOT_CLOAK
@@ -22,11 +23,8 @@
 	icon = 'icons/roguetown/clothing/armor.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/armor.dmi'
 	sleeved = null
-	boobed = TRUE
 	color = null
 	resistance_flags = FIRE_PROOF
-	r_sleeve_status = SLEEVE_NORMAL
-	l_sleeve_status = SLEEVE_NORMAL
 
 /obj/item/clothing/suit/roguetown/shirt/robe/abyssor //thanks to cre for abyssor clothing sprites
 	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_SHIRT|ITEM_SLOT_CLOAK
