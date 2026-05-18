@@ -134,6 +134,7 @@
 	grid_height = 64
 	drop_sound = 'sound/foley/dropsound/glass_drop.ogg'
 	possible_item_intents = list(/datum/intent/use)
+	dropshrink = 0.9
 	force = 15
 	throwforce = 18
 	throw_range = 2
