@@ -20,7 +20,7 @@ export const Panel = (props) => {
   const audio = useAudio();
   const settings = useSettings();
   const game = useGame();
-  const [showFormattingHelp, setShowFormattingHelp] = React.useState(false);
+  // const [showFormattingHelp, setShowFormattingHelp] = React.useState(false);
   if (process.env.NODE_ENV !== 'production') {
     const { useDebug, KitchenSink } = require('tgui/debug');
     const debug = useDebug();
@@ -59,17 +59,7 @@ export const Panel = (props) => {
               <Stack.Item grow overflowX="auto">
                 <ChatTabs />
               </Stack.Item>
-              <Stack.Item>
-                <Button
-                  icon="question-circle"
-                  color="average"
-                  tooltip="Formatting Help"
-                  tooltipPosition="bottom-start"
-                  onClick={() => setShowFormattingHelp(true)}
-                >
-                  Formatting Help
-                </Button>
-              </Stack.Item>
+              {/* Formatting Help button removed */}
               <Stack.Item>
                 <PingIndicator />
               </Stack.Item>
@@ -97,13 +87,7 @@ export const Panel = (props) => {
             </Stack>
           </Section>
         </Stack.Item>
-        {showFormattingHelp && (
-          <Stack.Item>
-            <Section>
-              {formattingHelp}
-            </Section>
-          </Stack.Item>
-        )}
+        {/* Formatting Help modal removed */}
         {audio.visible && (
           <Stack.Item fontSize={1.2}>
             <Section>
