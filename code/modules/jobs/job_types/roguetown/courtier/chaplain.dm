@@ -30,31 +30,6 @@ Only when swords are drawn might your true loyalties be discovered."
 	job_subclasses = list(
 		/datum/advclass/chaplain
 	)
-// /datum/job/roguetown/chaplain/after_spawn(mob/living/L, mob/M, latejoin = TRUE)//distinction from the acolytes
-// 	..()
-// 	if(ishuman(L))
-// 		var/mob/living/carbon/human/H = L
-// 		H.advsetup = 1
-// 		H.invisibility = INVISIBILITY_MAXIMUM
-// 		H.become_blind("advsetup")
-// //Title stuff. This is super sloppy.
-// 		var/prev_real_name = H.real_name
-// 		var/prev_name = H.name
-// //Default fallback title.
-// 		var/title = "Devotee"
-// //Actual titles now, based on pronouns.
-// 		switch(H.pronouns)
-// 			if(SHE_HER)
-// 				title = "Sister"
-// 			if(SHE_HER_M)
-// 				title = "Sister"
-// 			if(HE_HIM)
-// 				title = "Brother"
-// 			if(HE_HIM_F)
-// 				title = "Brother"
-// //Now apply the actual title.
-// 		H.real_name = "[title] [prev_real_name]"
-// 		H.name = "[title] [prev_name]"
 
 /datum/advclass/chaplain
 	name = "Court Chaplain"
@@ -99,7 +74,7 @@ Only when swords are drawn might your true loyalties be discovered."
 	beltl = /obj/item/storage/keyring/chaplain
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backr = /obj/item/rogueweapon/woodstaff/quarterstaff
-	backpack_contents = list(/obj/item/ritechalk)
+	// backpack_contents = list(/obj/item/ritechalk)
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/priest
 	H.cmode_music = 'sound/music/cmode/church/combat_acolyte.ogg' // has to be defined here for the selection below to work. sm1 please rewrite cmusic to apply pre-equip.
 	switch(H.patron?.type)
@@ -136,7 +111,7 @@ Only when swords are drawn might your true loyalties be discovered."
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/necra
 			shirt = /obj/item/clothing/suit/roguetown/armor/leather/vest/black
 			backr = /obj/item/rogueweapon/shovel//Meant for morticians, but since we don't have those...
-			backpack_contents = list(/obj/item/ritechalk, /obj/item/flashlight/flare/torch/lantern = 1, /obj/item/natural/bundle/stick = 1, /obj/item/necra_censer = 1)
+			backpack_contents = list(/obj/item/flashlight/flare/torch/lantern = 1, /obj/item/natural/bundle/stick = 1, /obj/item/necra_censer = 1)
 		// if(/datum/patron/divine/pestra)
 		// 	neck = /obj/item/clothing/neck/roguetown/psicross/pestra
 		// 	armor = /obj/item/clothing/suit/roguetown/shirt/robe/phys
@@ -165,7 +140,7 @@ Only when swords are drawn might your true loyalties be discovered."
 			wrists = /obj/item/clothing/wrists/roguetown/wrappings
 			shoes = /obj/item/clothing/shoes/roguetown/boots
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe
-			backpack_contents = list(/obj/item/ritechalk, /obj/item/book/rogue/law)
+			backpack_contents = list(/obj/item/book/rogue/law)
 		// if(/datum/patron/divine/xylix)
 		// 	head = /obj/item/clothing/head/roguetown/roguehood
 		// 	neck = /obj/item/clothing/neck/roguetown/psicross/xylix // no more good luck charm,  you wanna cheat gambling? Xylix weeps
@@ -182,7 +157,6 @@ Only when swords are drawn might your true loyalties be discovered."
 			wrists = /obj/item/clothing/wrists/roguetown/wrappings
 			shoes = /obj/item/clothing/shoes/roguetown/sandals
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/astrata
-	if(H.mind)
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_1)
 
