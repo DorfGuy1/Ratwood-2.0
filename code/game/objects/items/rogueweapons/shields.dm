@@ -303,6 +303,7 @@
 	max_integrity = 220 //not fully metal but not fully wood either
 	anvilrepair = /datum/skill/craft/carpentry
 	smeltresult = /obj/item/ingot/iron
+	dropshrink = 0.75
 
 /obj/item/rogueweapon/shield/tower/zyb/getonmobprop(tag)
 	. = ..()

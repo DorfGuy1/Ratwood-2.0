@@ -438,6 +438,7 @@
 	icon2step = 10
 	grid_width = 32
 	grid_height = 32
+	dropshrink = 0.9
 
 /obj/item/natural/bundle/stick
 	name = "bundle of sticks"

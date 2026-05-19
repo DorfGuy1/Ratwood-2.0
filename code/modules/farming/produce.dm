@@ -562,7 +562,7 @@
 	chopping_sound = TRUE
 	rotprocess = SHELFLIFE_LONG
 	seed = /obj/item/seeds/cabbage
-	dropshrink = 0.7
+	dropshrink = 0.75
 
 /obj/item/reagent_containers/food/snacks/grown/potato/rogue
 	name = "potato"
@@ -578,7 +578,7 @@
 	chopping_sound = TRUE
 	rotprocess = null
 	seed = /obj/item/seeds/potato
-	dropshrink = 0.9
+	dropshrink = 0.75
 
 /obj/item/reagent_containers/food/snacks/grown/garlick/rogue
 	name = "garlick bulb"

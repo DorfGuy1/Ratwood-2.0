@@ -20,6 +20,7 @@
 	sellprice = 20
 	grid_height = 32
 	grid_width = 32
+	dropshrink = 0.6
 
 /obj/item/natural/fur
 	name = "fur"
@@ -153,6 +154,7 @@
 	icon1step = 5
 	icon2 = "leatherroll2"
 	icon2step = 10
+	dropshrink = 0.9
 
 /obj/item/natural/cured/essence
 	name = "essence of wilderness"
