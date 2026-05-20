@@ -435,11 +435,12 @@
 	if(in_range(user, src) || isobserver(user))
 		user << browse_rsc('html/book.png')
 		var/body_border_css = window_rim_style ? "box-sizing:border-box;[window_rim_style]" : ""
+		var/rendered_info = build_read_info(TRUE)
 		var/dat = {"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 			<html><head><meta charset=\"utf-8\"><style type=\"text/css\">
 			html, body { height:100%; margin:0; padding:0; }
 			body { background-image:url('book.png');background-repeat: repeat;[body_border_css] }</style></head><body scroll=yes>"}
-		dat += info
+		dat += rendered_info
 		dat += "<br>"
 		dat += "</body></html>"
 		user << browse(dat, "window=reading;size=500x400;can_close=1;can_minimize=0;can_maximize=0;can_resize=1;titlebar=1;border=0")
@@ -455,6 +456,29 @@
 	dat += "[t]<br>"
 	dat += "</body></html>"
 	user << browse(dat, "window=reading;size=500x400;can_close=1;can_minimize=0;can_maximize=0;can_resize=1;titlebar=1;border=0")
+
+/obj/item/paper/proc/build_read_info(include_field_links = TRUE)
+	var/rendered = info || ""
+	var/laststart = 1
+	var/field_id = 0
+	while(field_id < 15)
+		var/istart = findtext(rendered, "<span class=\"paper_field\">", laststart)
+		if(!istart)
+			break
+		var/content_start = istart + length("<span class=\"paper_field\">")
+		var/iend = findtext(rendered, "</span>", content_start)
+		if(!iend)
+			break
+		field_id++
+		if(iend == content_start)
+			var/fill_text = "_____"
+			if(include_field_links)
+				fill_text = "<A href='?src=[REF(src)];write=[field_id]'>_____</A>"
+			rendered = copytext(rendered, 1, content_start) + fill_text + copytext(rendered, content_start)
+			laststart = content_start + length(fill_text)
+		else
+			laststart = iend + 1
+	return rendered
 
 /obj/item/paper/verb/rename()
 	set name = "Rename paper"
@@ -567,7 +591,6 @@
 	info_links = info
 	for(var/i in 1 to min(fields, 15))
 		addtofield(i, "<A href='?src=[REF(src)];write=[i]'>write</A> (<A href='?src=[REF(src)];help=1'>\[?\]</A>)", 1)
-	info_links = info_links + "<A href='?src=[REF(src)];write=end'>write</A> <A href='?src=[REF(src)];help=1'>\[?\]</A>"
 
 
 /obj/item/paper/proc/clearpaper()
@@ -681,13 +704,17 @@
 
 	if(href_list["write"])
 		var/id = href_list["write"]
+		var/field_num = text2num(id)
+		if(!field_num || field_num < 1 || field_num > min(fields, 15))
+			to_chat(usr, span_warning("That field cannot be written to."))
+			return
+		var/obj/item/i = usr.get_active_held_item()	// Check implement first so the prompt only opens when write-capable.
+		if(!istype(i, /obj/item/natural/thorn) && !istype(i, /obj/item/natural/feather))
+			to_chat(usr, span_warning("I need a feather or thorn in hand to write."))
+			return
 		var/t =  stripped_multiline_input("Enter what you want to write:", "Write", no_trim=TRUE)
 		if(!t || !usr.canUseTopic(src, BE_CLOSE, literate))
 			return
-		var/obj/item/i = usr.get_active_held_item()	//Check to see if he still got that darn pen, also check if he's using a crayon or pen.
-		if(!istype(i, /obj/item/natural/thorn))
-			if(!istype(i, /obj/item/natural/feather))
-				return
 
 		if(!in_range(src, usr) && loc != usr && loc.loc != usr && usr.get_active_held_item() != i)	//Some check to see if he's allowed to write
 			return
@@ -699,17 +726,11 @@
 			if((length(info) + length(t)) > maxlen)
 				to_chat(usr, "<span class='warning'>Too long. Try again.</span>")
 				return
-			if(id!="end")
-				addtofield(text2num(id), t) // He wants to edit a field, let him.
-			else
-				info += t // Oh, he wants to edit to the end of the file, let him.
-				testing("[length(info)]")
-				testing("[findtext(info, "\n")]")
-				updateinfolinks()
+			addtofield(field_num, t) // Field-only writing via read links.
 			writer_body = null
 			writer_body_imported = FALSE
 			playsound(src, 'sound/items/write.ogg', 100, FALSE)
-			format_browse(info_links, usr)
+			format_browse(build_read_info(TRUE), usr)
 			update_icon_state()
 
 /obj/item/paper/attackby(obj/item/P, mob/living/carbon/human/user, params)
