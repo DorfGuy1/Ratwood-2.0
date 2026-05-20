@@ -670,6 +670,8 @@
 /datum/sex_controller/proc/try_xylix_confetti_climax()
 	if(user?.patron?.type != /datum/patron/divine/xylix)
 		return
+	if(user.get_skill_level(/datum/skill/magic/holy) < SKILL_LEVEL_NOVICE)
+		return
 	var/trigger_chance = user.has_status_effect(/datum/status_effect/debuff/emberwine) ? 2 : 1
 	if(!prob(trigger_chance))
 		return
@@ -682,15 +684,14 @@
 			new /obj/effect/decal/cleanable/confetti/xylix(T)
 		return
 
-	var/behind_dir = turn(user.dir, 180)
-	var/turf/behind = get_step(center, behind_dir)
-	if(!behind)
-		behind = center
+	var/turf/front = get_step(center, user.dir)
+	if(!front)
+		front = center
 	var/left_dir = turn(user.dir, 90)
 	var/right_dir = turn(user.dir, -90)
-	var/turf/left = get_step(behind, left_dir)
-	var/turf/right = get_step(behind, right_dir)
-	new /obj/effect/decal/cleanable/confetti/xylix(behind)
+	var/turf/left = get_step(front, left_dir)
+	var/turf/right = get_step(front, right_dir)
+	new /obj/effect/decal/cleanable/confetti/xylix(front)
 	if(left)
 		new /obj/effect/decal/cleanable/confetti/xylix(left)
 	if(right)
