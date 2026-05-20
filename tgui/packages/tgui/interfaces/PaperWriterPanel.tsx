@@ -41,6 +41,13 @@ export const PaperWriterPanel = () => {
   const isFocused = useRef(false);
   // Holds the pending debounce timer so it can be cancelled explicitly.
   const debounceHandle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Monotonic client action sequence to let backend ignore stale out-of-order actions.
+  const actionSeq = useRef(0);
+
+  const nextActionSeq = () => {
+    actionSeq.current += 1;
+    return actionSeq.current;
+  };
 
   useEffect(() => {
     // Only sync from server if the user is not actively typing.
@@ -67,7 +74,7 @@ export const PaperWriterPanel = () => {
   };
 
   const updatePreview = () => {
-    act('update_draft', { draft, font });
+    act('update_draft', { draft, font, seq: nextActionSeq() });
     setPreviewDirty(false);
   };
 
@@ -76,7 +83,7 @@ export const PaperWriterPanel = () => {
       return;
     }
     debounceHandle.current = setTimeout(() => {
-      act('update_draft', { draft, font });
+      act('update_draft', { draft, font, seq: nextActionSeq() });
       setPreviewDirty(false);
       debounceHandle.current = null;
     }, 450);
@@ -266,7 +273,7 @@ export const PaperWriterPanel = () => {
                       debounceHandle.current = null;
                     }
                     setPreviewDirty(false);
-                    act('sign', { draft, font });
+                    act('sign', { draft, font, seq: nextActionSeq() });
                   }}>
                   Sign
                 </Button>
@@ -282,7 +289,7 @@ export const PaperWriterPanel = () => {
                     }
                     setDraft('');
                     setPreviewDirty(false);
-                    act('clear');
+                    act('clear', { seq: nextActionSeq() });
                   }}>
                   Clear
                 </Button>

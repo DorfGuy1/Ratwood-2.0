@@ -103,6 +103,14 @@
 	var/writer_font = "default"
 	/// Whether this document has been signed via the writer panel.
 	var/writer_signed = FALSE
+	/// Latest accepted writer action sequence from tgui; older actions are ignored.
+	var/writer_action_seq = 0
+
+/obj/item/paper/proc/get_writer_action_seq(list/params)
+	var/seq = text2num("[params["seq"]]")
+	if(!isnum(seq) || seq < 0)
+		return 0
+	return round(seq)
 
 /obj/item/paper/proc/get_writer_tool(mob/living/carbon/human/user)
 	if(!user)
@@ -265,12 +273,20 @@
 
 	switch(action)
 		if("update_draft")
+			var/client_seq = get_writer_action_seq(params)
+			if(client_seq < writer_action_seq)
+				return TRUE
+			writer_action_seq = client_seq
 			var/new_draft = params["draft"] || ""
 			writer_draft = copytext(new_draft, 1, maxlen + 1)
 			writer_font = sanitize_writer_font(params["font"])
 			return TRUE
 
 		if("sign")
+			var/client_seq = get_writer_action_seq(params)
+			if(client_seq < writer_action_seq)
+				return TRUE
+			writer_action_seq = client_seq
 			// Accept draft/font inline so the tgui client can send a single atomic
 			// action instead of a separate update_draft + sign (avoids the race under
 			// server time dilation where the debounce timer fires in between).
@@ -282,6 +298,10 @@
 			return TRUE
 
 		if("clear")
+			var/client_seq = get_writer_action_seq(params)
+			if(client_seq < writer_action_seq)
+				return TRUE
+			writer_action_seq = client_seq
 			writer_draft = ""
 			return TRUE
 
