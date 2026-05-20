@@ -382,10 +382,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 	if(!H.wear_mask)
 		H.equip_to_slot_or_del(new /obj/item/clothing/glasses/blindfold(H), SLOT_WEAR_MASK)
-	var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
-	head?.add_wound(/datum/wound/facial/eyes/left/permanent)
-	head?.add_wound(/datum/wound/facial/eyes/right/permanent)
-	H.update_fov_angles()
+	H.overlay_fullscreen("blind_flaw", /atom/movable/screen/fullscreen/impaired, 2)
 	H.adjust_triumphs(1)
 
 /datum/charflaw/colorblind
@@ -422,7 +419,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/hunted
 	name = "Hunted"
-	desc = "Something in my past has made me a target. I'm always looking over my shoulder."
+	desc = "Something in my past has made me a target. I'm always looking over my shoulder. YOU MAY BE PERMANENTLY REMOVED FROM THE ROUND WITHOUT ESCALATION BY YOUR ASSASSIN!"
 	var/logged = FALSE
 
 /datum/charflaw/hunted/on_mob_creation(mob/user)
