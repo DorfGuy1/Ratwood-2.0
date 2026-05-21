@@ -34,6 +34,7 @@
 	)
 
 /datum/outfit/job/roguetown/psyaltrist/pre_equip(mob/living/carbon/human/H)
+	head = /obj/item/clothing/head/roguetown/helmet/leather/chapeau
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded/psyaltrist
 	backl = /obj/item/storage/backpack/rogue/satchel/otavan
 	cloak = /obj/item/clothing/cloak/psyaltrist
