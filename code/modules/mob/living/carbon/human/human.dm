@@ -668,7 +668,8 @@
 	spill_embedded_objects()
 	set_heartattack(FALSE)
 	drunkenness = 0
-	return ..()
+	. = ..()
+	mark_zone_selector_hud_dirty()
 
 /mob/living/carbon/human/check_weakness(obj/item/weapon, mob/living/attacker)
 	. = ..()

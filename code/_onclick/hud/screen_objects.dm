@@ -369,9 +369,9 @@
 
 /atom/movable/screen/inventory/hand/update_overlays()
 	. = ..()
-	update_status_layers()
+	update_hand_vis()
 
-/atom/movable/screen/inventory/hand/proc/update_status_layers()
+/atom/movable/screen/inventory/hand/proc/update_hand_vis()
 	if(!handcuff_layer || !blocked_layer || !grabbed_layer || !active_layer)
 		return
 
@@ -1470,32 +1470,30 @@
 		if(H.get_bodypart(BODY_ZONE_TAUR))
 			missing_bodyparts_zones -= BODY_ZONE_L_LEG
 			missing_bodyparts_zones -= BODY_ZONE_R_LEG
+		var/nopain = HAS_TRAIT(H, TRAIT_NOPAIN)
 		for(var/X in H.bodyparts)
 			var/obj/item/bodypart/BP = X
 			if(BP.body_zone in missing_bodyparts_zones)
 				continue
-			if(HAS_TRAIT(H, TRAIT_NOPAIN))
-				if(BP.body_zone == BODY_ZONE_TAUR)
-					for(var/_z in list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG))
-						push_zone_overlay("[gender_prefix]-[_z]", "#78a8ba")
-				else
-					push_zone_overlay("[gender_prefix]-[BP.body_zone]", "#78a8ba")
-				continue
 			var/damage = min(BP.burn_dam + BP.brute_dam, BP.max_damage)
 			var/comparison = BP.max_damage ? (damage / BP.max_damage) : 0
 			var/wound_alpha = clamp(round((comparison * 255) * 2), 0, 255)
+			var/has_bleed = BP.get_hud_bleed_rate() > 0
+			// NO_PAIN: blue tint only when there is actual damage or visible bleed,
+			// otherwise an undamaged limb would falsely show as injured.
+			var/nopain_color = (nopain && (damage || has_bleed)) ? "#78a8ba" : null
 			if(BP.body_zone == BODY_ZONE_TAUR)
 				for(var/_z in list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG))
-					push_zone_overlay("[gender_prefix]-[_z]")
-					if(wound_alpha)
+					push_zone_overlay("[gender_prefix]-[_z]", nopain_color)
+					if(!nopain && wound_alpha)
 						push_zone_overlay("[gender_prefix]w-[_z]", null, wound_alpha)
-					if(BP.get_hud_bleed_rate())
+					if(has_bleed)
 						push_zone_overlay("[gender_prefix]-[_z]-bleed")
 			else
-				push_zone_overlay("[gender_prefix]-[BP.body_zone]")
-				if(wound_alpha)
+				push_zone_overlay("[gender_prefix]-[BP.body_zone]", nopain_color)
+				if(!nopain && wound_alpha)
 					push_zone_overlay("[gender_prefix]w-[BP.body_zone]", null, wound_alpha)
-				if(BP.get_hud_bleed_rate())
+				if(has_bleed)
 					push_zone_overlay("[gender_prefix]-[BP.body_zone]-bleed")
 		for(var/X in missing_bodyparts_zones)
 			push_zone_overlay("[gender_prefix]-[X]", "#2f002f")

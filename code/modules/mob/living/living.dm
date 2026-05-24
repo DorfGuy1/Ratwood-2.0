@@ -453,6 +453,9 @@
 				O.sublimb_grabbed = item_override
 			else
 				O.sublimb_grabbed = used_limb
+			if(BP)
+				C.update_hud_hand_slot(BP.held_index)
+				C.mark_zone_selector_hud_dirty()
 			put_in_hands(O)
 			O.update_hands(src)
 			if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER) || item_override)
