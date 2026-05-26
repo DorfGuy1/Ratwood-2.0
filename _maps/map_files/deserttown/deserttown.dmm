@@ -1302,7 +1302,7 @@
 /turf/open/floor/rogue/woodturned,
 /area/rogue/indoors/town/desert)
 "aBw" = (
-/obj/structure/flora/ausbushes/reedbush,
+/obj/structure/flora/roguegrass/reedbush,
 /turf/open/water/swamp,
 /area/rogue/under/underdark/rockhill)
 "aBz" = (
@@ -32617,7 +32617,7 @@
 /turf/closed/wall/mineral/rogue/sandbrick,
 /area/rogue/indoors/town/garrison/desert/cell)
 "ngn" = (
-/obj/structure/flora/ausbushes/reedbush,
+/obj/structure/flora/roguegrass/reedbush,
 /turf/open/water/swamp/deep,
 /area/rogue/under/cave/rhgoblinencampment)
 "ngx" = (
@@ -57457,7 +57457,7 @@
 /turf/open/floor/rogue/sandbrick,
 /area/rogue/outdoors/desert/above)
 "wUI" = (
-/obj/structure/flora/ausbushes/reedbush,
+/obj/structure/flora/roguegrass/reedbush,
 /turf/open/water/swamp,
 /area/rogue/under/cave/skeletoncrypt)
 "wUO" = (

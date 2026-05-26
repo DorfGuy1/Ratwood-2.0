@@ -1127,6 +1127,19 @@
 	..()
 	icon_state = "stonebr" // Weird override otherwise
 
+/obj/structure/mineral_door/wood/donjon/stone/tough
+	name = "tough stone door"
+	desc = "this one has a stronger lock than usual"
+	locked = TRUE
+	max_integrity = 2500
+	lockdifficulty = 2.5
+
+/obj/structure/mineral_door/wood/donjon/tough
+	name = "tough reinforce door"
+	desc = "this one has a stronger lock than usual"
+	locked = TRUE
+	max_integrity = 2500
+	lockdifficulty = 2.5
 
 /obj/structure/mineral_door/bars
 	name = "iron door"

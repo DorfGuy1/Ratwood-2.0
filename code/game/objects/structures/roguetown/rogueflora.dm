@@ -1275,3 +1275,14 @@
 /obj/structure/flora/roguegrass/jungle/sparse/Initialize(mapload)
 	. = ..()
 	icon_state = "grassb[rand(1, 5)]"
+
+//Roguefiying some more old assets
+
+
+/obj/structure/flora/roguegrass/reedbush
+	icon = 'icons/obj/flora/ausflora.dmi'
+	icon_state = "reedbush_1"
+
+/obj/structure/flora/roguegrass/reedbush/Initialize(mapload)
+	icon_state = "reedbush_[rand(1, 4)]"
+	. = ..()
