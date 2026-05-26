@@ -1168,6 +1168,13 @@
 	repair_cost_second = /obj/item/ingot/iron
 	repair_skill = /datum/skill/craft/blacksmithing
 
+/obj/structure/mineral_door/bars/tough
+	name = "tough bars"
+	desc = "this one has a stronger lock than usual"
+	locked = TRUE
+	max_integrity = 2500
+	lockdifficulty = 2.5
+
 /obj/structure/mineral_door/barsold
 	name = "iron door"
 	desc = ""
