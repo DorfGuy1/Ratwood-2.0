@@ -1836,7 +1836,7 @@
 
 	var/filter = owner.get_filter(EORANAURA_FILTER)
 	if(!filter)
-		owner.add_filter(EORANAURA_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 60, "size" = 2))
+		owner.add_filter(EORANAURA_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 60, "size" = 1))
 
 	var/mutable_appearance/effect = mutable_appearance('icons/effects/effects.dmi', "curse", -JOYBRINGER_LAYER, alpha = 128)
 	effect.appearance_flags = RESET_COLOR

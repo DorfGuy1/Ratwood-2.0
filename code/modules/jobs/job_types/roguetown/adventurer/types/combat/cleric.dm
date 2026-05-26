@@ -688,6 +688,7 @@
 			head = /obj/item/clothing/head/roguetown/eoramask
 			r_hand = /obj/item/rogueweapon/huntingknife/scissors
 			backpack_contents[/obj/item/reagent_containers/eoran_seed] = 1
+			ADD_TRAIT(H, TRAIT_BEAUTIFUL, TRAIT_GENERIC)
 		if (/datum/patron/divine/xylix)
 			cloak = /obj/item/clothing/cloak/templar/xylix
 			mask = /obj/item/clothing/mask/rogue/xylixmask
