@@ -21101,7 +21101,7 @@
 "iqv" = (
 /obj/effect/landmark/start/dt/chaplain,
 /turf/open/floor/rogue/tile/checkeralt,
-/area/rogue/indoors/town/desert/manor)
+/area/rogue/indoors/town/manor/desert)
 "iqw" = (
 /obj/structure/stairs/stone{
 	dir = 2;
@@ -30948,7 +30948,7 @@
 /area/rogue/outdoors/desert)
 "mqX" = (
 /obj/effect/decal/cleanable/sigil/SE,
-/obj/item/clothing/neck/roguetown/psicross/inhumen/ancienttt,
+/obj/item/clothing/neck/roguetown/psicross/inhumen/ancient,
 /turf/open/floor/rogue/citybrick/citybrick1,
 /area/rogue/under/town/basement/desert)
 "mrh" = (
