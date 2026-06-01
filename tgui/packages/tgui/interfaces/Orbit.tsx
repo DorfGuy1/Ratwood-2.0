@@ -116,9 +116,16 @@ export const Orbit = () => {
   const normalizedQuery = query.trim().toLowerCase();
 
   const sections = useMemo(() => {
-    return SECTIONS.map((section) => {
+    return SECTIONS.reduce((builtSections, section) => {
       const source = (data[section.key] || []) as OrbitTarget[];
-      const filtered = source.filter((item) => itemMatches(item, normalizedQuery));
+      const filtered = normalizedQuery
+        ? source.filter((item) => itemMatches(item, normalizedQuery))
+        : source;
+
+      if (filtered.length === 0) {
+        return builtSections;
+      }
+
       const roleGroups: RoleGroup[] = [];
 
       if (section.key === 'alive') {
@@ -150,12 +157,14 @@ export const Orbit = () => {
         roleGroups.push(...groupByRoleLabel(filtered));
       }
 
-      return {
+      builtSections.push({
         ...section,
         items: filtered,
         roleGroups,
-      };
-    }).filter((section) => section.items.length > 0);
+      });
+
+      return builtSections;
+    }, [] as Array<(typeof SECTIONS)[number] & { items: OrbitTarget[]; roleGroups: RoleGroup[] }>);
   }, [data, normalizedQuery]);
 
   return (

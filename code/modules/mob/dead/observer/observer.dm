@@ -1147,6 +1147,10 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 /datum/orbit_menu
 	var/mob/dead/observer/owner
+	var/list/cached_orbit_data
+	var/cached_orbit_data_user_ref
+	var/cached_orbit_data_time = 0
+	var/orbit_cache_ttl_ds = 10
 
 /datum/orbit_menu/New(mob/dead/observer/new_owner)
 	if(!istype(new_owner))
@@ -1156,6 +1160,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	..()
 
 /datum/orbit_menu/Destroy()
+	cached_orbit_data = null
+	cached_orbit_data_user_ref = null
 	owner = null
 	return ..()
 
@@ -1168,7 +1174,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		ui.open()
 
 /datum/orbit_menu/ui_static_data(mob/user)
-	return build_orbit_data(user)
+	return get_orbit_data_snapshot(user)
 
 /datum/orbit_menu/ui_data(mob/user)
 	var/list/data = list()
@@ -1202,10 +1208,31 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			return TRUE
 
 		if("refresh")
+			invalidate_orbit_cache()
 			ui.send_full_update()
 			return TRUE
 
 	return FALSE
+
+/datum/orbit_menu/proc/invalidate_orbit_cache()
+	cached_orbit_data = null
+	cached_orbit_data_user_ref = null
+	cached_orbit_data_time = 0
+
+/datum/orbit_menu/proc/get_orbit_data_snapshot(mob/user)
+	if(!istype(user))
+		return build_orbit_data(user)
+
+	var/user_ref = REF(user)
+	if(cached_orbit_data && cached_orbit_data_user_ref == user_ref && (world.time - cached_orbit_data_time) <= orbit_cache_ttl_ds)
+		return cached_orbit_data
+
+	var/list/data = build_orbit_data(user)
+
+	cached_orbit_data = data
+	cached_orbit_data_user_ref = user_ref
+	cached_orbit_data_time = world.time
+	return data
 
 /datum/orbit_menu/proc/build_orbit_data(mob/user)
 	var/list/data = list(
@@ -1219,6 +1246,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	var/list/namecounts_dead = list()
 	var/list/namecounts_ghosts = list()
 	var/list/namecounts_misc = list()
+	var/list/role_color_cache = list()
 
 	for(var/mob/M in sortmobs())
 		if(M.client?.holder?.fakekey)
@@ -1227,14 +1255,14 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			continue
 
 		if(isobserver(M))
-			var/list/entry = serialize_atom(M, namecounts_ghosts)
+			var/list/entry = serialize_atom(M, namecounts_ghosts, role_color_cache)
 			if(!entry)
 				continue
 			data["ghosts"] += list(entry)
 			continue
 
 		if(M.stat == DEAD)
-			var/list/entry = serialize_atom(M, namecounts_dead)
+			var/list/entry = serialize_atom(M, namecounts_dead, role_color_cache)
 			if(!entry)
 				continue
 			data["dead"] += list(entry)
@@ -1246,7 +1274,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(!M.mind && !M.ckey)
 			continue
 
-		var/list/entry = serialize_atom(M, namecounts_alive)
+		var/list/entry = serialize_atom(M, namecounts_alive, role_color_cache)
 		if(!entry)
 			continue
 		data["alive"] += list(entry)
@@ -1257,7 +1285,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(ismob(A))
 			continue
 
-		var/list/entry = serialize_atom(A, namecounts_misc)
+		var/list/entry = serialize_atom(A, namecounts_misc, role_color_cache)
 		if(!entry)
 			continue
 
@@ -1281,7 +1309,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 	return null
 
-/datum/orbit_menu/proc/serialize_atom(atom/movable/target, list/namecounts)
+/datum/orbit_menu/proc/serialize_atom(atom/movable/target, list/namecounts, list/role_color_cache)
 	if(!istype(target))
 		return null
 
@@ -1311,15 +1339,35 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			if(antag_group)
 				entry["antag_group"] = antag_group
 		if(M.mind?.assigned_role)
-			entry["role"] = M.mind.assigned_role
-			var/datum/job/J = SSjob.GetJob(M.mind.assigned_role)
-			if(J)
-				var/department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
-				var/list/department_colors = JCOLOR_BY_DEPARTMENT
-				if(department_colors[department])
-					entry["selection_color"] = department_colors[department]
-				else if(J.selection_color)
-					entry["selection_color"] = J.selection_color
+			var/assigned_role = M.mind.assigned_role
+			entry["role"] = assigned_role
+			if(role_color_cache)
+				var/cached_color = role_color_cache[assigned_role]
+				if(!isnull(cached_color))
+					if(cached_color != "")
+						entry["selection_color"] = cached_color
+				else
+					var/resolved_color = null
+					var/datum/job/J = SSjob.GetJob(assigned_role)
+					if(J)
+						var/department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
+						var/list/department_colors = JCOLOR_BY_DEPARTMENT
+						if(department_colors[department])
+							resolved_color = department_colors[department]
+						else if(J.selection_color)
+							resolved_color = J.selection_color
+					role_color_cache[assigned_role] = resolved_color || ""
+					if(resolved_color)
+						entry["selection_color"] = resolved_color
+			else
+				var/datum/job/J = SSjob.GetJob(assigned_role)
+				if(J)
+					var/department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
+					var/list/department_colors = JCOLOR_BY_DEPARTMENT
+					if(department_colors[department])
+						entry["selection_color"] = department_colors[department]
+					else if(J.selection_color)
+						entry["selection_color"] = J.selection_color
 		if(M.job)
 			entry["job"] = M.job
 		if(isliving(M))
