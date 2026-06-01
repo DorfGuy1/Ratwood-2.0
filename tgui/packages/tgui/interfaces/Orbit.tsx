@@ -35,7 +35,6 @@ const SECTIONS = [
   { key: 'alive', title: 'Alive', color: 'blue' },
   { key: 'dead', title: 'Dead', color: 'average' },
   { key: 'ghosts', title: 'Ghosts', color: 'label' },
-  { key: 'misc', title: 'Misc', color: 'average' },
 ] as const;
 
 type RoleGroup = {
@@ -153,6 +152,8 @@ export const Orbit = () => {
         }
 
         roleGroups.push(...groupByRoleLabel(normalAlive));
+      } else if (section.key === 'ghosts') {
+        roleGroups.push({ label: 'Ghosts', items: filtered });
       } else {
         roleGroups.push(...groupByRoleLabel(filtered));
       }
@@ -214,61 +215,89 @@ export const Orbit = () => {
 
               {sections.map((section) => (
                 <Collapsible key={section.key} title={`${section.title} - (${section.items.length})`}>
-                  <Stack vertical>
-                    {section.roleGroups.map((group) => (
-                      <Stack.Item key={`${section.key}-${group.label}`}>
-                        <Section
-                          title={`${group.label} - (${group.items.length})`}
-                        >
-                          <Stack wrap>
-                            {group.items.map((item) => {
-                              const selected = data.orbiting_ref === item.ref;
-                              const appliedColor =
-                                colorMode === 'health'
-                                  ? getHealthStateColor(item.health_percent)
-                                  : item.selection_color;
-                              const hasSelectionColor = !!appliedColor;
-                              const buttonStyle = hasSelectionColor
-                                ? {
-                                    backgroundColor: appliedColor,
-                                    color: getTextColorForBackground(appliedColor as string),
-                                    border: `1px solid ${appliedColor}`,
-                                  }
-                                : undefined;
-                              return (
-                                <Stack.Item key={item.ref}>
-                                  <Button
-                                    color={hasSelectionColor ? 'transparent' : section.color}
-                                    onClick={() => act('orbit', { ref: item.ref })}
-                                    selected={selected}
-                                    style={buttonStyle}
-                                    tooltip={
-                                      colorMode === 'health'
-                                        ? `${item.job || item.role || item.full_name} (${item.health_percent ?? '?'}% health)`
-                                        : item.job || item.role || item.full_name
+                  {section.key === 'ghosts' ? (
+                    <Stack wrap>
+                      {section.items.map((item) => {
+                        const selected = data.orbiting_ref === item.ref;
+                        return (
+                          <Stack.Item key={item.ref}>
+                            <Button
+                              color={section.color}
+                              onClick={() => act('orbit', { ref: item.ref })}
+                              selected={selected}
+                              tooltip={item.full_name}
+                              tooltipPosition="bottom-start"
+                            >
+                              <Stack>
+                                <Stack.Item>{getDisplayName(item.full_name)}</Stack.Item>
+                                {!!item.orbiters && (
+                                  <Stack.Item>
+                                    <Icon name="ghost" /> {item.orbiters}
+                                  </Stack.Item>
+                                )}
+                              </Stack>
+                            </Button>
+                          </Stack.Item>
+                        );
+                      })}
+                    </Stack>
+                  ) : (
+                    <Stack vertical>
+                      {section.roleGroups.map((group) => (
+                        <Stack.Item key={`${section.key}-${group.label}`}>
+                          <Section
+                            title={`${group.label} - (${group.items.length})`}
+                          >
+                            <Stack wrap>
+                              {group.items.map((item) => {
+                                const selected = data.orbiting_ref === item.ref;
+                                const appliedColor =
+                                  colorMode === 'health'
+                                    ? getHealthStateColor(item.health_percent)
+                                    : item.selection_color;
+                                const hasSelectionColor = !!appliedColor;
+                                const buttonStyle = hasSelectionColor
+                                  ? {
+                                      backgroundColor: appliedColor,
+                                      color: getTextColorForBackground(appliedColor as string),
+                                      border: `1px solid ${appliedColor}`,
                                     }
-                                    tooltipPosition="bottom-start"
-                                  >
-                                    <Stack>
-                                      <Stack.Item>
-                                        {getDisplayName(item.full_name)}
-                                        {!!item.role && ` [${item.role}]`}
-                                      </Stack.Item>
-                                      {!!item.orbiters && (
+                                  : undefined;
+                                return (
+                                  <Stack.Item key={item.ref}>
+                                    <Button
+                                      color={hasSelectionColor ? 'transparent' : section.color}
+                                      onClick={() => act('orbit', { ref: item.ref })}
+                                      selected={selected}
+                                      style={buttonStyle}
+                                      tooltip={
+                                        colorMode === 'health'
+                                          ? `${item.job || item.role || item.full_name} (${item.health_percent ?? '?'}% health)`
+                                          : item.job || item.role || item.full_name
+                                      }
+                                      tooltipPosition="bottom-start"
+                                    >
+                                      <Stack>
                                         <Stack.Item>
-                                          <Icon name="ghost" /> {item.orbiters}
+                                          {getDisplayName(item.full_name)}
+                                          {!!item.role && ` [${item.role}]`}
                                         </Stack.Item>
-                                      )}
-                                    </Stack>
-                                  </Button>
-                                </Stack.Item>
-                              );
-                            })}
-                          </Stack>
-                        </Section>
-                      </Stack.Item>
-                    ))}
-                  </Stack>
+                                        {!!item.orbiters && (
+                                          <Stack.Item>
+                                            <Icon name="ghost" /> {item.orbiters}
+                                          </Stack.Item>
+                                        )}
+                                      </Stack>
+                                    </Button>
+                                  </Stack.Item>
+                                );
+                              })}
+                            </Stack>
+                          </Section>
+                        </Stack.Item>
+                      ))}
+                    </Stack>
+                  )}
                 </Collapsible>
               ))}
             </Section>
