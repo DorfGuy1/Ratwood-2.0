@@ -1238,6 +1238,10 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			data["dead"] += list(entry)
 			continue
 
+		if(istype(M, /mob/living/carbon/human/species/npc/deadite))
+			data["npcs"] += list(entry)
+			continue
+
 		if(!M.mind && !M.ckey)
 			data["npcs"] += list(entry)
 			continue
