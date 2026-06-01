@@ -18,6 +18,7 @@ type OrbitTarget = {
   orbiters?: number;
   job?: string;
   role?: string;
+  selection_color?: string;
 };
 
 type OrbitData = {
@@ -52,6 +53,20 @@ function itemMatches(item: OrbitTarget, query: string) {
 
 function getRoleLabel(item: OrbitTarget) {
   return item.role || item.job || 'Unassigned';
+}
+
+function getTextColorForBackground(hex: string) {
+  const sanitized = hex.replace('#', '');
+  if (sanitized.length !== 6) {
+    return '#f4f4f4';
+  }
+
+  const r = Number.parseInt(sanitized.slice(0, 2), 16);
+  const g = Number.parseInt(sanitized.slice(2, 4), 16);
+  const b = Number.parseInt(sanitized.slice(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.55 ? '#1a1a1a' : '#f4f4f4';
 }
 
 export const Orbit = (props) => {
@@ -127,12 +142,20 @@ export const Orbit = (props) => {
                           <Stack wrap>
                             {group.items.map((item) => {
                               const selected = data.orbiting_ref === item.ref;
+                              const hasSelectionColor = !!item.selection_color;
+                              const buttonStyle = hasSelectionColor
+                                ? {
+                                    backgroundColor: item.selection_color,
+                                    color: getTextColorForBackground(item.selection_color as string),
+                                  }
+                                : undefined;
                               return (
                                 <Stack.Item key={item.ref}>
                                   <Button
-                                    color={section.color}
+                                    color={hasSelectionColor ? 'transparent' : section.color}
                                     onClick={() => act('orbit', { ref: item.ref })}
                                     selected={selected}
+                                    style={buttonStyle}
                                     tooltip={item.job || item.role || item.full_name}
                                     tooltipPosition="bottom-start"
                                   >

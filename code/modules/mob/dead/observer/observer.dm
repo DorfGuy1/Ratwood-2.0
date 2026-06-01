@@ -1110,8 +1110,6 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set desc = ""
 	set category = "Ghost"
 	set hidden = 1
-	if(!check_rights(R_WATCH))
-		return
 	if(!orbit_menu)
 		orbit_menu = new(src)
 
@@ -1289,6 +1287,9 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		var/mob/M = target
 		if(M.mind?.assigned_role)
 			entry["role"] = M.mind.assigned_role
+			var/datum/job/J = SSjob.GetJob(M.mind.assigned_role)
+			if(J?.selection_color)
+				entry["selection_color"] = J.selection_color
 		if(M.job)
 			entry["job"] = M.job
 		if(istype(M, /mob/living/carbon/human/species/npc/deadite))
