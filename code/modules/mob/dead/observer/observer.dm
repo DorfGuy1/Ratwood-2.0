@@ -1216,7 +1216,11 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		"npcs" = list(),
 	)
 
-	var/list/namecounts = list()
+	var/list/namecounts_alive = list()
+	var/list/namecounts_dead = list()
+	var/list/namecounts_ghosts = list()
+	var/list/namecounts_npcs = list()
+	var/list/namecounts_misc = list()
 
 	for(var/mob/M in sortmobs())
 		if(M.client?.holder?.fakekey)
@@ -1224,26 +1228,37 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(is_hidden_from_ghosts(M, user))
 			continue
 
-		var/list/entry = serialize_atom(M, namecounts)
-		if(!entry)
-			continue
-
 		if(isobserver(M))
+			var/list/entry = serialize_atom(M, namecounts_ghosts)
+			if(!entry)
+				continue
 			data["ghosts"] += list(entry)
 			continue
 
 		if(M.stat == DEAD)
+			var/list/entry = serialize_atom(M, namecounts_dead)
+			if(!entry)
+				continue
 			data["dead"] += list(entry)
 			continue
 
 		if(istype(M, /mob/living/carbon/human/species/npc/deadite))
+			var/list/entry = serialize_atom(M, namecounts_npcs)
+			if(!entry)
+				continue
 			data["npcs"] += list(entry)
 			continue
 
 		if(!M.mind && !M.ckey)
+			var/list/entry = serialize_atom(M, namecounts_npcs)
+			if(!entry)
+				continue
 			data["npcs"] += list(entry)
 			continue
 
+		var/list/entry = serialize_atom(M, namecounts_alive)
+		if(!entry)
+			continue
 		data["alive"] += list(entry)
 
 	for(var/atom/movable/A in GLOB.poi_list)
@@ -1252,7 +1267,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(ismob(A))
 			continue
 
-		var/list/entry = serialize_atom(A, namecounts)
+		var/list/entry = serialize_atom(A, namecounts_misc)
 		if(!entry)
 			continue
 
@@ -1288,10 +1303,19 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(M.mind?.assigned_role)
 			entry["role"] = M.mind.assigned_role
 			var/datum/job/J = SSjob.GetJob(M.mind.assigned_role)
-			if(J?.selection_color)
-				entry["selection_color"] = J.selection_color
+			if(J)
+				var/department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
+				var/list/department_colors = JCOLOR_BY_DEPARTMENT
+				if(department_colors[department])
+					entry["selection_color"] = department_colors[department]
+				else if(J.selection_color)
+					entry["selection_color"] = J.selection_color
 		if(M.job)
 			entry["job"] = M.job
+		if(isliving(M))
+			var/mob/living/L = M
+			if(L.maxHealth > 0)
+				entry["health_percent"] = round(clamp((L.health / L.maxHealth) * 100, 0, 100))
 		if(istype(M, /mob/living/carbon/human/species/npc/deadite))
 			entry["role"] = "Deadite NPC"
 

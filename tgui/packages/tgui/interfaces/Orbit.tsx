@@ -19,6 +19,7 @@ type OrbitTarget = {
   job?: string;
   role?: string;
   selection_color?: string;
+  health_percent?: number;
 };
 
 type OrbitData = {
@@ -55,6 +56,11 @@ function getRoleLabel(item: OrbitTarget) {
   return item.role || item.job || 'Unassigned';
 }
 
+function getDisplayName(fullName: string) {
+  // Names are uniquified server-side with " (2)" suffixes; hide this visual noise.
+  return fullName.replace(/ \(\d+\)$/, '');
+}
+
 function getTextColorForBackground(hex: string) {
   const sanitized = hex.replace('#', '');
   if (sanitized.length !== 6) {
@@ -69,9 +75,30 @@ function getTextColorForBackground(hex: string) {
   return luminance > 0.55 ? '#1a1a1a' : '#f4f4f4';
 }
 
+function getHealthStateColor(healthPercent?: number) {
+  if (healthPercent === undefined || Number.isNaN(healthPercent)) {
+    return '#6a6f77';
+  }
+
+  if (healthPercent >= 85) {
+    return '#2f9e44';
+  }
+  if (healthPercent >= 65) {
+    return '#66a80f';
+  }
+  if (healthPercent >= 40) {
+    return '#e67700';
+  }
+  if (healthPercent >= 20) {
+    return '#d9480f';
+  }
+  return '#c92a2a';
+}
+
 export const Orbit = (props) => {
   const { act, data } = useBackend<OrbitData>();
   const [query, setQuery] = useState('');
+  const [colorMode, setColorMode] = useState<'role' | 'health'>('role');
 
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -121,6 +148,19 @@ export const Orbit = (props) => {
                 <Stack.Item>
                   <Button icon="sync-alt" onClick={() => act('refresh')} tooltip="Refresh" />
                 </Stack.Item>
+                <Stack.Item>
+                  <Button
+                    icon={colorMode === 'role' ? 'id-badge' : 'heartbeat'}
+                    onClick={() => setColorMode(colorMode === 'role' ? 'health' : 'role')}
+                    tooltip={
+                      colorMode === 'role'
+                        ? 'Switch to health-state colors'
+                        : 'Switch to role colors'
+                    }
+                  >
+                    {colorMode === 'role' ? 'Role Colors' : 'Health Colors'}
+                  </Button>
+                </Stack.Item>
               </Stack>
             </Section>
           </Stack.Item>
@@ -142,11 +182,16 @@ export const Orbit = (props) => {
                           <Stack wrap>
                             {group.items.map((item) => {
                               const selected = data.orbiting_ref === item.ref;
-                              const hasSelectionColor = !!item.selection_color;
+                              const appliedColor =
+                                colorMode === 'health'
+                                  ? getHealthStateColor(item.health_percent)
+                                  : item.selection_color;
+                              const hasSelectionColor = !!appliedColor;
                               const buttonStyle = hasSelectionColor
                                 ? {
-                                    backgroundColor: item.selection_color,
-                                    color: getTextColorForBackground(item.selection_color as string),
+                                    backgroundColor: appliedColor,
+                                    color: getTextColorForBackground(appliedColor as string),
+                                    border: `1px solid ${appliedColor}`,
                                   }
                                 : undefined;
                               return (
@@ -156,12 +201,16 @@ export const Orbit = (props) => {
                                     onClick={() => act('orbit', { ref: item.ref })}
                                     selected={selected}
                                     style={buttonStyle}
-                                    tooltip={item.job || item.role || item.full_name}
+                                    tooltip={
+                                      colorMode === 'health'
+                                        ? `${item.job || item.role || item.full_name} (${item.health_percent ?? '?'}% health)`
+                                        : item.job || item.role || item.full_name
+                                    }
                                     tooltipPosition="bottom-start"
                                   >
                                     <Stack>
                                       <Stack.Item>
-                                        {item.full_name}
+                                        {getDisplayName(item.full_name)}
                                         {!!item.role && ` [${item.role}]`}
                                       </Stack.Item>
                                       {!!item.orbiters && (
