@@ -236,7 +236,7 @@ function getDisplayName(fullName: string) {
 
 function getTooltipRoleText(item: OrbitTarget) {
   const baseRoleText = item.role || item.job || UNASSIGNED_ROLE_LABEL;
-  if (!item.antag_role) {
+  if (!item.antag_role || item.antag_role === baseRoleText) {
     return baseRoleText;
   }
 
