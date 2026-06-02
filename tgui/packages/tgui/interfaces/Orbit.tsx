@@ -69,6 +69,19 @@ const UNASSIGNED_ROLE_LABEL = 'Unassigned';
 const TRAILING_MASKED_DESCRIPTOR_REGEX = / \[[^\]]+\]$/;
 const TRAILING_DUPLICATE_SUFFIX_REGEX = / \(\d+\)$/;
 const EMPTY_TARGETS: OrbitTarget[] = [];
+const ALIVE_NORMAL_GROUP_ORDER = [
+  'Noblemen',
+  'Courtiers',
+  'Garrison',
+  'Inquisition',
+  'Yeomen',
+  'Peasants',
+  'Sidefolk',
+  'Wanderers',
+] as const;
+const ALIVE_NORMAL_GROUP_ORDER_INDEX: Map<string, number> = new Map(
+  ALIVE_NORMAL_GROUP_ORDER.map((label, index) => [label, index]),
+);
 
 function mapAntagGroupToTier(antagGroup: AntagGroup): AntagTier | null {
   if (antagGroup === 'major') {
@@ -153,6 +166,21 @@ function groupsFromMap(grouped: Map<string, OrbitTargetIndexed[]>) {
     .map(([label, groupedItems]) => ({ label, items: groupedItems }));
 }
 
+function sortAliveNormalGroups(groups: RoleGroup[]) {
+  const unknownGroupIndex = ALIVE_NORMAL_GROUP_ORDER.length;
+
+  return [...groups].sort((a, b) => {
+    const aIndex = ALIVE_NORMAL_GROUP_ORDER_INDEX.get(a.label) ?? unknownGroupIndex;
+    const bIndex = ALIVE_NORMAL_GROUP_ORDER_INDEX.get(b.label) ?? unknownGroupIndex;
+
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex;
+    }
+
+    return a.label.localeCompare(b.label);
+  });
+}
+
 function buildRoleGroupsForSection(
   sectionKey: OrbitSection['key'],
   filtered: OrbitTargetIndexed[],
@@ -188,13 +216,25 @@ function buildRoleGroupsForSection(
     pushGroupedItem(groupedNormal, item.groupKey, item);
   });
 
-  const roleGroups: RoleGroup[] = [];
-  roleGroups.push(...groupsFromMap(groupedByFamily));
-  roleGroups.push(...groupAntagsByType(groupedMajor, 'Major'));
-  roleGroups.push(...groupAntagsByType(groupedMinor, 'Minor'));
-  roleGroups.push(...groupsFromMap(groupedNormal));
+  const familyGroups = groupsFromMap(groupedByFamily);
+  const familyMajorGroups = familyGroups.filter((group) =>
+    group.label.startsWith('Major - '),
+  );
+  const familyMinorGroups = familyGroups.filter((group) =>
+    group.label.startsWith('Minor - '),
+  );
 
-  return roleGroups;
+  const normalGroups = sortAliveNormalGroups(groupsFromMap(groupedNormal));
+  const majorGroups = [
+    ...familyMajorGroups,
+    ...groupAntagsByType(groupedMajor, 'Major'),
+  ].sort((a, b) => a.label.localeCompare(b.label));
+  const minorGroups = [
+    ...familyMinorGroups,
+    ...groupAntagsByType(groupedMinor, 'Minor'),
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  return [...normalGroups, ...majorGroups, ...minorGroups];
 }
 
 function groupAntagsByType(
