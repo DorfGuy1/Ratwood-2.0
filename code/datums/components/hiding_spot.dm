@@ -101,6 +101,9 @@
 /// Adds text to the parent that this can be used as a hiding place
 /datum/component/hiding_spot/proc/on_parent_examine(datum/source, mob/user, list/examine_list)
 	SIGNAL_HANDLER
+	if(!isliving(user)) // stinky ghosts
+		return
+
 	if(!in_range(user, parent))
 		return
 
