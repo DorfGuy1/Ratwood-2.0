@@ -771,7 +771,7 @@
 	layer = ABOVE_MOB_LAYER
 	plane = GAME_PLANE_UPPER
 	blade_dulling = DULLING_BASHCHOP
-	max_integrity = 500
+	max_integrity = 200
 	destroy_sound = 'sound/combat/hits/onwood/destroyfurniture.ogg'
 	attacked_sound = list('sound/combat/hits/onwood/woodimpact (1).ogg','sound/combat/hits/onwood/woodimpact (2).ogg')
 
@@ -813,7 +813,7 @@
 	desc = ""
 	icon_state = "sign"
 	var/wrotesign
-	max_integrity = 500
+	max_integrity = 200//these don't need to be so tough
 	blade_dulling = DULLING_BASHCHOP
 	icon = 'icons/roguetown/misc/structure.dmi'
 	pixel_y = 3
