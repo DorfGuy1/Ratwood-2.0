@@ -167,81 +167,65 @@
 	name = "flower seedling"
 
 /obj/item/herbseed/atropa
-	name = "atropa seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/atropa
 	seed_identity = "atropa seeds"
 
 /obj/item/herbseed/matricaria
-	name = "matricaria seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/matricaria
 	seed_identity = "matricaria seeds"
 
 /obj/item/herbseed/symphitum
-	name = "symphitum seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/symphitum
 	seed_identity = "symphitum seeds"
 
 /obj/item/herbseed/taraxacum
-	name = "taraxacum seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/taraxacum
 	seed_identity = "taraxacum seeds"
 
 /obj/item/herbseed/euphrasia
-	name = "euphrasia seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/euphrasia
 	seed_identity = "euphrasia seeds"
 
 /obj/item/herbseed/paris
-	name = "paris seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/paris
 	seed_identity = "paris seeds"
 
 /obj/item/herbseed/calendula
-	name = "calendula seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/calendula
 	seed_identity = "calendula seeds"
 
 /obj/item/herbseed/mentha
-	name = "mentha seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/mentha
 	seed_identity = "mentha seeds"
 
 /obj/item/herbseed/urtica
-	name = "urtica seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/urtica
 	seed_identity = "urtica seeds"
 
 /obj/item/herbseed/salvia
-	name = "salvia seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/salvia
 	seed_identity = "salvia seeds"
 
 /obj/item/herbseed/hypericum
-	name = "hypericum seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/hypericum
 	seed_identity = "hypericum seeds"
 
 /obj/item/herbseed/benedictus
-	name = "benedictus seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/benedictus
 	seed_identity = "benedictus seeds"
 
 /obj/item/herbseed/valeriana
-	name = "valeriana seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/valeriana
 	seed_identity = "valeriana seeds"
 
 /obj/item/herbseed/artemisia
-	name = "artemisia seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/artemisia
 	seed_identity = "artemisia seeds"
 
 /obj/item/herbseed/rosa
-	name = "rosa seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/rosa
 	seed_identity = "rosa seeds"
 
 /obj/item/herbseed/manabloom
-	name = "manabloom seeds"
 	makes_herb = /obj/structure/flora/roguegrass/herb/manabloom
 	seed_identity = "manabloom seeds"
