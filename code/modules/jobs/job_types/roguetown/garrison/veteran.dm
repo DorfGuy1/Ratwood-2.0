@@ -632,7 +632,7 @@
 		)
 	H.verbs |= /mob/proc/haltyell
 
-/datum/outfit/job/roguetown/spy/scout/choose_loadout(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/vet/spy/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
 	H.adjust_blindness(-3)
 	if(H.mind)
