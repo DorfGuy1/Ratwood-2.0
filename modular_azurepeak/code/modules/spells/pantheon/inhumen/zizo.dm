@@ -320,7 +320,8 @@
 	SEND_SIGNAL(user, COMSIG_LUX_EXTRACTED, target)
 	record_featured_stat(FEATURED_STATS_CRIMINALS, user)
 	record_round_statistic(STATS_LUX_HARVESTED)
-	target.apply_status_effect(/datum/status_effect/debuff/devitalised/lux_ripped)
+	target.apply_status_effect(/datum/status_effect/debuff/devitalised)
+	target.apply_status_effect(/datum/status_effect/debuff/devitalised/lux_ripped) // applied alongside devitalised for a total of -5 omnistat while preventing lux harvesting surgically
 	qdel(src)
 
 /datum/stressevent/myfuckingluxman
