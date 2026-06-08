@@ -76,6 +76,7 @@
 	worn_x_dimension = 64
 	worn_y_dimension = 64
 	body_parts_covered = HEAD|HAIR
+	dropshrink = null
 
 /obj/item/clothing/head/roguetown/helmet/kettle
 	name = "kettle helmet"
@@ -536,7 +537,7 @@
 // Warden Helmets
 /obj/item/clothing/head/roguetown/helmet/bascinet/antler
 	name = "wardens's helmet"
-	desc = "A beastly snouted armet with the large horns of an elder saiga protruding from it. Residents of the vale know not to fear such a sight in the wilds, for they are exclusively associated with the Rotwood wardens."
+	desc = "A beastly snouted armet with the large horns of an elder saiga protruding from it. Residents of the realm know not to fear such a sight in the wilds, for they are exclusively associated with the Wardens."
 	icon = 'icons/roguetown/clothing/special/warden.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/warden64.dmi'
 	bloody_icon = 'icons/effects/blood64.dmi'
@@ -622,6 +623,7 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST, BCLASS_STAB)
 	max_integrity = 250
 	smeltresult = /obj/item/ingot/iron
+	dropshrink = null
 
 
 	//----------------- INFAREDBARON/HATS.DM ---------------------
@@ -637,3 +639,4 @@
 	flags_inv = HIDEHAIR
 	smeltresult = /obj/item/ingot/steel
 	emote_environment = 3
+	dropshrink = null
