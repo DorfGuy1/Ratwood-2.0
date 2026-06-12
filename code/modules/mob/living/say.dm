@@ -462,47 +462,40 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			var/turf/below_turf = GET_TURF_BELOW(source)
 			if(below_turf)
 				listening += get_hearers_in_range(message_range + eavesdrop_range, below_turf)
-	var/list/the_dead = list()
+	var/alist/admin_listeners = alist()
+	var/do_ghost_protection = has_ghost_protection(src)
 	if(Zs_all)
 		for(var/mob/potential_listener as anything in GLOB.player_list)
-			var/observer = isobserver(potential_listener)
-			if(observer)
-				if(!potential_listener.client?.prefs)
-					continue
-				if(!client) // so ghosts don't have to see mice or cows or chickens making a racket
-					continue
-				if(is_hidden_from_ghosts(src, observer))
-					listening -= observer // just in case
-					continue
+			if(!potential_listener.client?.prefs)
+				continue
+			if(!client) // so we don't have to see mice or cows or chickens making a racket
+				continue
 			if(get_dist(potential_listener, src) > message_range) //they're out of range of normal hearing
-				if(observer)
-					if(eavesdropping_modes[message_mode] && !(potential_listener.client.prefs.chat_toggles & CHAT_GHOSTWHISPER)) //they're whispering and we have hearing whispers at any range off
-						continue
-					if(!(potential_listener.client.prefs.chat_toggles & CHAT_GHOSTEARS)) //they're talking normally and we have hearing at any range off
-						continue
+				continue // don't check ghostwhisper prefs here, those are for admins
+			if(do_ghost_protection && isobserver(potential_listener) && !ghost_bypasses_ghost_protection(potential_listener))
+				continue
 			if(!is_in_zweb(src.z,potential_listener.z))
 				continue
 			listening |= potential_listener
-			if(observer)
-				the_dead[observer] = TRUE
-	else // special-case for if only ghosts need to worry
-		for(var/mob/dead/observer/observer as anything in GLOB.dead_mob_list)
-			if(!observer.client?.prefs)
+	// show to admins with ghostears/ghostwhisper on
+	for(var/client/admin as anything in GLOB.admins)
+		if(!(admin?.prefs.chat_toggles & CHAT_GHOSTEARS))
+			continue
+		if(!client) // so admins don't have to see mice or cows or chickens making a racket
+			continue
+		var/mob/observer = admin.mob
+		if(get_dist(observer, src) > message_range) //they're out of range of normal hearing
+			if(eavesdropping_modes[message_mode] && !(admin.prefs.chat_toggles & CHAT_GHOSTWHISPER)) //they're whispering and we have hearing whispers at any range off
 				continue
-			if(!client) // so ghosts don't have to see mice or cows or chickens making a racket
+		if(!is_in_zweb(src.z,observer.z))
+			continue
+		listening |= observer
+		admin_listeners[observer] = TRUE
+	if(do_ghost_protection) // don't loop over the whole listening list unless we really have to
+		for(var/mob/dead/observer/ghost in listening) // a necessary evil so ghosts don't show up in the seen log
+			if(ghost_bypasses_ghost_protection(ghost))
 				continue
-			if(is_hidden_from_ghosts(src, observer))
-				listening -= observer // just in case
-				continue
-			if(get_dist(observer, src) > message_range) //they're out of range of normal hearing
-				if(eavesdropping_modes[message_mode] && !(observer.client.prefs.chat_toggles & CHAT_GHOSTWHISPER)) //they're whispering and we have hearing whispers at any range off
-					continue
-				if(!(observer.client.prefs.chat_toggles & CHAT_GHOSTEARS)) //they're talking normally and we have hearing at any range off
-					continue
-			if(!is_in_zweb(src.z,observer.z))
-				continue
-			listening |= observer
-			the_dead[observer] = TRUE
+			listening -= ghost
 	log_seen(src, null, listening, original_message, SEEN_LOG_SAY)
 
 	var/eavesdropping
@@ -516,8 +509,9 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	var/rendered = compose_message(src, message_language, message, null, spans, message_mode)
 	var/alist/speaker_ceiling_nearby = alist()
-	if(!speaker_has_ceiling && speaker_ceiling)
-		for(var/mob/living/hearer in hearers(world.view, speaker_ceiling))
+	if(Zs_too && !Zs_all && !speaker_has_ceiling && speaker_ceiling) // only generate this lookup if we need it
+		// can't just check for living, ghosts want to hear too
+		for(var/mob/hearer in get_hearers_in_view(message_range, speaker_ceiling)) // we need LOS to their location
 			speaker_ceiling_nearby[hearer] = TRUE
 	for(var/atom/movable/AM as anything in listening)
 		var/hearall = FALSE
@@ -525,11 +519,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		var/turf/listener_ceiling = get_step_multiz(listener_turf, UP)
 		if(istype(AM, /obj/item/listeningdevice)) // Very evil snowflake code.
 			hearall = TRUE
-		if(listener_ceiling)
-			listener_has_ceiling = TRUE
-			if(istransparentturf(listener_ceiling))
-				listener_has_ceiling = FALSE
-		if(!hearall && !Zs_too && !isobserver(AM) && AM.z != src.z)
+		listener_has_ceiling = listener_ceiling && !istransparentturf(listener_ceiling)
+		if(!hearall && !Zs_too && !admin_listeners[AM] && AM.z != src.z)
 			continue
 		var/keenears = HAS_TRAIT(AM, TRAIT_KEENEARS)
 		if(!hearall && Zs_too && listener_turf.z != speaker_turf.z && !Zs_all)
@@ -558,7 +549,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			var/mob/living/carbon/human/target = AM
 			var/datum/species/dullahan/target_species = target.dna.species
 			tocheck = target_species.headless ? target_species.my_head : AM
-		if(eavesdrop_range && get_dist(source, tocheck) > message_range+keenears && !(the_dead[AM]))
+		if(eavesdrop_range && get_dist(source, tocheck) > message_range+keenears && !(admin_listeners[AM]))
 			AM.Hear(eavesrendered, src, message_language, eavesdropping, null, spans, message_mode, original_message)
 			heard_message += AM
 		else
