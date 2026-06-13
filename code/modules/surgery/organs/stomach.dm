@@ -32,7 +32,7 @@
 
 	Nutri = locate(/datum/reagent/consumable/nutriment) in H.reagents.reagent_list
 
-	if(Nutri)
+	if(Nutri && damage)
 		if(prob((damage/40) * Nutri.volume * Nutri.volume))
 			H.vomit(damage)
 			to_chat(H, span_warning("My stomach reels in pain as you're incapable of holding down all that food!"))

@@ -26,7 +26,22 @@
 	/// Associated maniac key
 	var/inscryption_key
 
+	var/last_beat_sound = 0
 	food_type = /obj/item/reagent_containers/food/snacks/organ/heart
+
+GLOBAL_VAR_INIT(heart_sound_pool, new /datum/heart_sound_pool)
+
+/datum/heart_sound_pool
+	var/sound/slowbeat
+	var/sound/fastbeat
+
+/datum/heart_sound_pool/New()
+	..()
+	slowbeat = sound('sound/health/slowbeat.ogg', repeat = TRUE)
+	fastbeat = sound('sound/health/fastbeat.ogg', repeat = TRUE)
+
+/proc/get_heart_sounds()
+	return GLOB.heart_sound_pool
 
 /obj/item/organ/heart/Destroy()
 	for(var/datum/culling_duel/D in GLOB.graggar_cullings)
@@ -107,26 +122,29 @@
 	..()
 	if(owner.client && beating)
 		failed = FALSE
-		var/sound/slowbeat = sound('sound/health/slowbeat.ogg', repeat = TRUE)
-		var/sound/fastbeat = sound('sound/health/fastbeat.ogg', repeat = TRUE)
 		var/mob/living/carbon/H = owner
 
+		var/new_beat = BEAT_NONE
 
-		if(H.health <= H.crit_threshold && beat != BEAT_SLOW)
-			beat = BEAT_SLOW
-			H.playsound_local(get_turf(H), slowbeat,40,0, channel = CHANNEL_HEARTBEAT)
-//			to_chat(owner, span_notice("I feel my heart slow down..."))
-		if(beat == BEAT_SLOW && H.health > H.crit_threshold)
+		if(H.health <= H.crit_threshold)
+			new_beat = BEAT_SLOW
+		else if(H.jitteriness && H.health > HEALTH_THRESHOLD_FULLCRIT)
+			new_beat = BEAT_FAST
+		if(beat != new_beat)	
 			H.stop_sound_channel(CHANNEL_HEARTBEAT)
-			beat = BEAT_NONE
-
-		if(H.jitteriness)
-			if(H.health > HEALTH_THRESHOLD_FULLCRIT && (!beat || beat == BEAT_SLOW))
-				H.playsound_local(get_turf(H),fastbeat,40,0, channel = CHANNEL_HEARTBEAT)
-				beat = BEAT_FAST
-		else if(beat == BEAT_FAST)
-			H.stop_sound_channel(CHANNEL_HEARTBEAT)
-			beat = BEAT_NONE
+			beat = new_beat
+			last_beat_sound = 0
+		//Our oggs are not the same length.
+		var/interval = ((beat == BEAT_SLOW) ? 1200 : 285)
+		if(beat != BEAT_NONE && (last_beat_sound == 0 || world.time > last_beat_sound + interval))
+			last_beat_sound = world.time
+			var/turf/T = get_turf(H)
+			var/datum/heart_sound_pool/pool = get_heart_sounds()
+			switch(beat)
+				if(BEAT_SLOW)
+					H.playsound_local(T, pool.slowbeat, 40, FALSE, channel = CHANNEL_HEARTBEAT)
+				if(BEAT_FAST)
+					H.playsound_local(T, pool.fastbeat, 40, FALSE, channel = CHANNEL_HEARTBEAT)
 
 	if(organ_flags & ORGAN_FAILING)	//heart broke, stopped beating, death imminent
 		if(owner.stat == CONSCIOUS)
@@ -134,6 +152,9 @@
 				span_danger("I feel a terrible pain in my chest, as if my heart has stopped!"))
 		owner.set_heartattack(TRUE)
 		failed = TRUE
+		owner.stop_sound_channel(CHANNEL_HEARTBEAT)
+
+
 /obj/item/organ/heart/construct
 	name = "construct core"
 	desc = "Swirling with a blessing of Astrata and pulsing with lux inside. This allows a construct to move."
