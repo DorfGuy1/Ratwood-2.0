@@ -535,6 +535,11 @@
 		/datum/sprite_accessory/hair/head/nest,
 		/datum/sprite_accessory/hair/head/strand,
 		/datum/sprite_accessory/hair/head/sodden,
+		/datum/sprite_accessory/hair/head/indigozap,
+		/datum/sprite_accessory/hair/head/rainbowdash,
+		/datum/sprite_accessory/hair/head/applejack,
+		/datum/sprite_accessory/hair/head/rarity,
+		/datum/sprite_accessory/hair/head/sunsetshimmer,
 		)
 
 /datum/customizer_choice/bodypart_feature/hair/head/humanoid/get_random_accessory(datum/customizer_entry/entry, datum/preferences/prefs)
