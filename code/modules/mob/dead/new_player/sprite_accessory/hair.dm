@@ -1719,11 +1719,11 @@
 	icon_state = "sodden"
 
 /datum/sprite_accessory/hair/head/indigozap
-	name = "Goggles"
+	name = "Reckless"
 	icon_state = "indigo_zap"
 
 /datum/sprite_accessory/hair/head/rainbowdash
-	name = "Loyalty"
+	name = "Loyal"
 	icon_state = "rainbow_dash"
 
 /datum/sprite_accessory/hair/head/vulpkian
