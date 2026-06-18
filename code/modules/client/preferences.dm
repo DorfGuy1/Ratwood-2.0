@@ -3287,7 +3287,11 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 		character.update_hair()
 		character.update_body_parts(redraw = TRUE)
 
-	character.char_accent = char_accent
+	if (character.char_accent in GLOB.character_accents)
+		character.char_accent = char_accent
+	else
+		char_accent = "No accent"
+		character.char_accent = char_accent
 
 	if(culinary_preferences)
 		apply_culinary_preferences(character)
