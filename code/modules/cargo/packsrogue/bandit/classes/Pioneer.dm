@@ -145,6 +145,21 @@
 	cost = 20 
 	contains = list(/obj/item/contraption/linker)
 
+/datum/supply_pack/rogue/Pioneer/Sarrows
+	name = "Steel Bodkin Arrow"
+	cost = 3
+	contains = list(/obj/item/ammo_casing/caseless/rogue/arrow/steel)
+	
+/datum/supply_pack/rogue/Pioneer/pyroarrows // Engineering arrows... they can have them...
+	name = "Pyroclastic Arrow"
+	cost = 3
+	contains = list(/obj/item/ammo_casing/caseless/rogue/arrow/pyro)
+
+/datum/supply_pack/rogue/Pioneer/pyrobolts
+	name = "Pyroclastic bolt"
+	cost = 3
+	contains = list(/obj/item/ammo_casing/caseless/rogue/bolt/pyro)
+
 /datum/supply_pack/rogue/Pioneer/cogs
 	name = "Cogs"
 	cost = 20
@@ -272,59 +287,44 @@
 	
 // Ranged Weaponry
 
-/datum/supply_pack/rogue/Knave/bow
+/datum/supply_pack/rogue/Pioneer/bow
 	name = "Bow"
 	cost = 10
 	contains = list(/obj/item/gun/ballistic/revolver/grenadelauncher/bow)
 
-/datum/supply_pack/rogue/Knave/crossbow
+/datum/supply_pack/rogue/Pioneer/crossbow
 	name = "Crossbow"
 	cost = 20
 	contains = list(/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow)
 
-/datum/supply_pack/rogue/Knave/recurvebow
+/datum/supply_pack/rogue/Pioneer/recurvebow
 	name = "Recurve Bow"
 	cost = 20
 	contains = list(/obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve)
 
-/datum/supply_pack/rogue/Knave/longbow
+/datum/supply_pack/rogue/Pioneer/longbow
 	name = "Longbow"
 	cost = 40
 	contains = list(/obj/item/gun/ballistic/revolver/grenadelauncher/bow/longbow)
 
-/datum/supply_pack/rogue/Knave/slurbow
+/datum/supply_pack/rogue/Pioneer/slurbow
 	name = "Slurbow"
 	cost = 40
 	contains = list(/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/slurbow)
 
-// Ranged Ammunition
+// Standard Ammunition
 
-/datum/supply_pack/rogue/Knave/quiver
+/datum/supply_pack/rogue/Pioneer/quiver
 	name = "Empty Quiver"
 	cost = 5
 	contains = list(/obj/item/quiver)
 
-/datum/supply_pack/rogue/Knave/quivers/arrows
+/datum/supply_pack/rogue/Pioneer/quivers/arrows
 	name = "Quiver of Arrows"
 	cost = 10
 	contains = list(/obj/item/quiver/arrows)
 
-/datum/supply_pack/rogue/Knave/quivers/bolts
+/datum/supply_pack/rogue/Pioneer/quivers/bolts
 	name = "Quiver of Bolts"
 	cost = 20
 	contains = list(/obj/item/quiver/bolts)
-
-/datum/supply_pack/rogue/Knave/Sarrows
-	name = "Steel Bodkin Arrow"
-	cost = 3
-	contains = list(/obj/item/ammo_casing/caseless/rogue/arrow/steel)
-	
-/datum/supply_pack/rogue/Knave/pyroarrows // Engineering arrows... they can have them...
-	name = "Pyroclastic Arrow"
-	cost = 3
-	contains = list(/obj/item/ammo_casing/caseless/rogue/arrow/pyro)
-
-/datum/supply_pack/rogue/Knave/pyrobolts
-	name = "Pyroclastic bolt"
-	cost = 3
-	contains = list(/obj/item/ammo_casing/caseless/rogue/bolt/pyro)
