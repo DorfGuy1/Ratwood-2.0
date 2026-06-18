@@ -33,6 +33,14 @@
 				/datum/reagent/medicine/manapot = 15)
 	craftdiff = 2
 
+/datum/crafting_recipe/roguetown/arcana/ritechalk
+	name = "ritual chalk"
+	skillcraft = /datum/skill/magic/holy
+	result = /obj/item/ritechalk
+	reqs = list(/obj/item/rogueore/cinnabar = 1,
+				/datum/reagent/water/blessed = 15)
+	craftdiff = 2
+
 /datum/crafting_recipe/roguetown/arcana/infernalfeather
 	name = "infernal feather"
 	result = /obj/item/natural/feather/infernal
