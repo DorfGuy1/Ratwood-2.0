@@ -23,14 +23,13 @@
 		TRAIT_CALTROPIMMUNE,
 		TRAIT_LONGSTRIDER,
 		TRAIT_OUTDOORSMAN,
-		TRAIT_WOODSMAN
+		TRAIT_WOODSMAN,
 	)
 	subclass_stats = list(
 		STATKEY_STR = 3,
 		STATKEY_CON = 2,
 		STATKEY_WIL = 2,
 		STATKEY_SPD = 2,
-		STATKEY_LCK = 2,
 		STATKEY_INT = -2,
 		STATKEY_PER = -2
 	)
@@ -55,8 +54,14 @@
 		/datum/skill/magic/holy = SKILL_LEVEL_JOURNEYMAN,
 	)
 
+	extra_context = "This class is restricted from using the Natural Armor virtue."
+
+	virtue_restrictions = list(
+		/datum/virtue/combat/tough_hide,
+	)
+
 /datum/outfit/job/roguetown/wretch/lunacyembracer/pre_equip(mob/living/carbon/human/H)
-	// -- Start of section for god specific bonuses --
+	// -- Start of section for god specific bonuses --	
 	if(H.patron?.type == /datum/patron/inhumen/graggar)
 		ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)
 		ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC) //no athletics for you
@@ -83,6 +88,8 @@
 	//	H.adjust_skillrank(/datum/skill/labor/farming, 1, TRUE) LE already has master farming for some reason? I'm not going to add to it.
 		H.adjust_skillrank_up_to(/datum/skill/misc/climbing, SKILL_LEVEL_EXPERT, TRUE)
 		H.grant_language(/datum/language/beast) //dendor antags can talk to WWs and druids
+		ADD_TRAIT(H, TRAIT_RITUALIST, TRAIT_GENERIC)
+		H.put_in_hands(new /obj/item/ritechalk(H))
 	if(H.patron?.type == /datum/patron/divine/noc)
 		H.adjust_skillrank_up_to(/datum/skill/misc/reading, SKILL_LEVEL_JOURNEYMAN, TRUE) // Really good at reading... almost actually useful for LE.
 		H.adjust_skillrank_up_to(/datum/skill/craft/alchemy, SKILL_LEVEL_EXPERT, TRUE)
@@ -92,6 +99,8 @@
 		H.adjust_skillrank_up_to(/datum/skill/labor/fishing, SKILL_LEVEL_MASTER, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/misc/swimming, SKILL_LEVEL_EXPERT, TRUE)
 		ADD_TRAIT(H, TRAIT_WATERBREATHING, TRAIT_GENERIC)
+		ADD_TRAIT(H, TRAIT_RITUALIST, TRAIT_GENERIC)
+		H.put_in_hands(new /obj/item/ritechalk(H))
 	if(H.patron?.type == /datum/patron/divine/necra)
 		ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)
 		ADD_TRAIT(H, TRAIT_SOUL_EXAMINE, TRAIT_GENERIC)
@@ -114,6 +123,8 @@
 		H.adjust_skillrank_up_to(/datum/skill/misc/climbing, SKILL_LEVEL_EXPERT, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/misc/lockpicking, SKILL_LEVEL_NOVICE, TRUE)
 		H.adjust_skillrank_up_to(/datum/skill/misc/music, SKILL_LEVEL_NOVICE, TRUE)
+		ADD_TRAIT(H, TRAIT_RITUALIST, TRAIT_GENERIC)
+		H.put_in_hands(new /obj/item/ritechalk(H))
 	// -- End of section for god specific bonuses --
 
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
