@@ -466,3 +466,36 @@
 	name = "To Al-Ashur"
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "underworldportal"
+
+// Effects
+/obj/effect/decal/edge/desert_gray
+	color = "#655653"
+
+/obj/effect/decal/edge_corner/desert_gray
+	color = "#655653"
+
+//Decor
+/obj/structure/vase
+	name = "fancy pot"
+	desc = "Decorative and Practical!"
+	icon = 'modular_deserttown/icons/pots.dmi'
+	icon_state = "fancypot1"
+	anchored = TRUE
+	opacity = FALSE
+	density = TRUE
+	max_integrity = 100
+
+//Noc Window
+/obj/structure/roguewindow/stained/blue
+	icon = 'modular_deserttown/icons/windows.dmi'
+	icon_state = "stained-blue"
+	base_state = "stained-blue"
+
+/obj/structure/flora/roguegrass/desertgrass
+	name = "desert grass"
+	desc = "Dry grass struggling to survive in the arid climate."
+	icon = 'modular_deserttown/icons/flora.dmi'
+	icon_state = "desertgrass1"
+
+/obj/structure/flora/roguegrass/desertgrass/update_icon()
+	icon_state = "desertgrass[rand(1, 5)]"
