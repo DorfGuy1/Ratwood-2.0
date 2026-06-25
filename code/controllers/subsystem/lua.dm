@@ -2,6 +2,7 @@
 SUBSYSTEM_DEF(lua)
 	name = "Lua Scripting"
 	runlevels = RUNLEVEL_LOBBY | RUNLEVELS_DEFAULT
+	init_order = INIT_ORDER_LUA
 	wait = 0.1 SECONDS
 
 	/// A list of all lua states
@@ -30,7 +31,7 @@ SUBSYSTEM_DEF(lua)
 	DREAMLUAU_SET_GLOBAL_CALL_WRAPPER("/proc/wrap_lua_global_proc_call")
 	// Set the print wrapper, as otherwise, the print function is meaningless
 	DREAMLUAU_SET_PRINT_WRAPPER("/proc/wrap_lua_print")
-	return SS_INIT_SUCCESS
+	return ..()
 
 /datum/controller/subsystem/lua/OnConfigLoad()
 	// Read the paths from the config file
