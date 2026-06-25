@@ -41,6 +41,8 @@
 
 /datum/intent/flail/strike/matthiosflail
 	reach = 2
+	damfactor = 1.3 // More damage than peasant flail, not sure why the gilded one had worse intents before, but here we are!
+
 
 /datum/intent/flail/strikerange
 	name = "ranged strike"
@@ -74,6 +76,7 @@
 
 /datum/intent/mace/smash/flail/matthiosflail
 	reach = 2
+	damfactor = 1.6 // so it's better than the militia counterpart.
 
 /datum/intent/mace/smash/flail/militia
 	damfactor = 0.9
@@ -252,6 +255,7 @@
 				return list("shrink" = 0.6,"sx" = 5,"sy" = -3,"nx" = -5,"ny" = -2,"wx" = -5,"wy" = -1,"ex" = 3,"ey" = -2,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 7,"sturn" = -7,"wturn" = 16,"eturn" = -22,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
 
 /obj/item/rogueweapon/flail/peasantwarflail/matthios
+	force = 25 // lets icono grapple and flail, gives it a leg up over peasant counterpart
 	name = "Gilded Flail"
 	desc = "Weight of wealth in a deadly striking end."
 	icon_state = "matthiosflail"
@@ -262,7 +266,7 @@
 	associated_skill = /datum/skill/combat/whipsflails
 	slot_flags = ITEM_SLOT_BACK
 	anvilrepair = /datum/skill/craft/weaponsmithing
-
+	wdefense = 5 //+1 compared to the peasant version, the magic golden babysmasher should be better than a shitty threasher.
 
 /obj/item/rogueweapon/flail/peasantwarflail/matthios/Initialize(mapload)
 	. = ..()
