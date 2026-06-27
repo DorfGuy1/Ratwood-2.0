@@ -978,14 +978,14 @@
 //Why are all of these in one giant file.
 /obj/structure/fluff/statue/abyssor
 	name = "abyssor statue"
-	desc = "An ephemeral cerulean dream..."
+	desc = "An ephemeral cerulean dream, carved by those who seek to understand unspoken truths."
 	icon_state = "abyssor"
 	icon = 'icons/roguetown/misc/tallandwide.dmi'
 	pixel_x = -16
 
 /obj/structure/fluff/statue/abyssor/dolomite
 	name = "abyssor statue"
-	desc = "An ephemeral cerulean dream...."
+	desc = "An ephemeral cerulean dream, carved by those who seek to understand unspoken truths."
 	icon_state = "abyssor_dolomite"
 
 /obj/structure/fluff/statue/knight/r
@@ -1089,7 +1089,7 @@
 
 /obj/structure/fluff/statue/tdummy
 	name = "practice dummy"
-	desc = "A squire's best friend; take care it doesn't knock on your arse."
+	desc = "A squire's best friend; take care it doesn't knock you on your arse."
 	icon_state = "p_dummy"
 	icon = 'icons/roguetown/misc/structure.dmi'
 
