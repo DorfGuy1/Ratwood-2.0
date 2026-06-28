@@ -6,12 +6,23 @@
 	var/alist/bodyparts_by_zone = alist()
 
 // Proposed change: Use check_zone instead of doing two loops.
+// ^ doing that breaks taurs, but it's still a good way to make it faster
 /mob/living/carbon/get_bodypart(zone)
 	RETURN_TYPE(/obj/item/bodypart)
 	if(!zone)
 		zone = BODY_ZONE_CHEST
 	zone = check_zone(zone)
-	return bodyparts_by_zone[zone]
+	. = bodyparts_by_zone[zone]
+	if(.)
+		return // we found it, return early
+	// taur jank here
+	// this could still break other cases where subtargets and check_zone don't match
+	// but those are edge-cases and should be avoided/rewritten anyway
+	for(var/obj/item/bodypart/bodypart as anything in bodyparts)
+		for(var/subzone in bodypart.subtargets)
+			if(subzone != zone)
+				continue
+			return bodypart
 
 /mob/living/carbon/proc/get_bodypart_complex(list/zones)
 	if(!length(zones))
@@ -148,11 +159,7 @@
 	return null
 
 /mob/living/carbon/get_taur_tail()
-	for(var/X in bodyparts)
-		var/obj/item/bodypart/affecting = X
-		if(affecting.body_zone == BODY_ZONE_TAUR)
-			return affecting
-	return null
+	return get_bodypart(BODY_ZONE_TAUR)
 
 //Helper for quickly creating a new limb - used by augment code in species.dm spec_attacked_by
 /mob/living/carbon/proc/newBodyPart(zone, robotic, fixed_icon)
