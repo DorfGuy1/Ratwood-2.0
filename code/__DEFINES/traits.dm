@@ -755,7 +755,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_NO_TELEPORT "no-teleport"
 /// For items you can't remove on wearing but can still hold freely
 #define TRAIT_NO_SELF_UNEQUIP "no-self-unequip"
-/// Items with this trait will not appear when examined.
+/// Items with this trait will not appear when examined. (only implemented for rings)
 #define TRAIT_EXAMINE_SKIP "examine_skip"
 
 //quirk traits
