@@ -180,15 +180,15 @@
 	name = "grand fireplace"
 	healing_range = 6
 
-/obj/machinery/light/rogue/campfire/fireplace/grand
-    name = "large fireplace"
-    icon = 'icons/roguetown/misc/fireplace64.dmi'
-    bulb_colour = "#ffa35c"
-
 /obj/machinery/light/rogue/campfire/fireplace/crafted
 	density = FALSE
 	pixel_y = 32
 	cookonme = TRUE
+
+/obj/machinery/light/rogue/campfire/fireplace/crafted/great
+    name = "large fireplace"
+    icon = 'icons/roguetown/misc/fireplace64.dmi'
+    bulb_colour = "#ffa35c"
 	
 /obj/machinery/light/rogue/campfire/fireplace/blue
 	desc = "A curious cool fire dances upon a bed of mysteriously glowing embers."

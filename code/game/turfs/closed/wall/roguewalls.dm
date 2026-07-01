@@ -161,7 +161,6 @@
 	icon = 'icons/turf/roguewall.dmi'
 	icon_state = "stonebricklight"
 	light_outer_range = 4
-	bulb_colour = "#ffa35c" // this should make the wall glow theoretically at least
 
 /turf/closed/wall/mineral/rogue/wood
 	name = "wooden wall"

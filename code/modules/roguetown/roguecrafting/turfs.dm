@@ -278,7 +278,7 @@
 
 /datum/crafting_recipe/roguetown/turfs/stone/brick/bricklight
 	name = "wall (stonebrick light) (2 stoneblocks, 1 lamptern)"
-	result = /turf/closed/wall/mineral/rogue/stonebrick/light
+	result = /turf/closed/wall/mineral/rogue/stonebrick/stonebricklight
 	reqs = list(/obj/item/natural/stoneblock = 2, /obj/item/flashlight/flare/torch/lantern = 1)
 	craftdiff = 3
 

@@ -164,7 +164,7 @@ datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
 	name = "gold inverse cross"
 	reqs = list(/obj/item/ingot/gold = 1,
 				/obj/item/ingot/steel = 2)
-	result = /obj/structure/fluff/psycross/zizocross/gold
+	result = /obj/structure/fluff/psycross/zizocross/golden
 
 /datum/crafting_recipe/roguetown/structures/psycross/graggar
 	name = "stone graggarite cross"
@@ -1038,16 +1038,6 @@ datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
 	wallcraft = TRUE
 	craftdiff = 0
 
-/datum/crafting_recipe/roguetown/structure/walllantern
-	name = "wall lantern"
-	result = /obj/machinery/light/roguestreet/orange/walllamp
-	reqs = list(/obj/item/flashlight/flare/torch/lantern = 1)
-	verbage_simple = "build"
-	verbage = "builds"
-	skillcraft = /datum/skill/craft/masonry
-	wallcraft = TRUE
-	craftdiff = 0
-
 /datum/crafting_recipe/roguetown/structure/stonewalldeco
 	name = "stone wall decoration"
 	result = /obj/structure/fluff/walldeco/stone
@@ -1371,7 +1361,7 @@ datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
 				/obj/item/natural/glass = 1)
 	skillcraft = /datum/skill/craft/carpentry
 	wallcraft = TRUE
-	craftdiff = 5table
+	craftdiff = 5
 
 /datum/crafting_recipe/roguetown/structure/floorclock
 	name = "Floor Clock"
