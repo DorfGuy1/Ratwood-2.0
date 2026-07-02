@@ -813,7 +813,7 @@
 /obj/structure/fluff/iconsign
     icon_state = "sign"
     name = "icon sign"
-    desc "you shouldn't be seeing this."
+    desc = "you shouldn't be seeing this."
     icon = 'icons/roguetown/misc/signs.dmi'
     max_integrity = 200
     blade_dulling = DULLING_BASHCHOP
