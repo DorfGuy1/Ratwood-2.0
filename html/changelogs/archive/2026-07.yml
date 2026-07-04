@@ -14,3 +14,13 @@
   BlindPoet:
   - rscadd: Added back the Janissary's mace
   - rscadd: Added a shield to the class to match its' description
+2026-07-04:
+  Xander3359:
+  - bugfix: Fix attacks, spells and miracles fizzling sometimes if you hold a channel
+      and move your mouse.
+  - bugfix: Fix T3 eyes giving you +1 in a bugged stat
+  wikimody:
+  - bugfix: Surgical tool that stepped out of line has been brought by in line by
+      force (cautery intends got shufled)
+  zeroisthebiggay:
+  - bugfix: rookies properly get willpower
