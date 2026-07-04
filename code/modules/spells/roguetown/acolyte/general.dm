@@ -100,7 +100,9 @@
 /obj/effect/proc_holder/spell/invoked/heal
 	name = "Fortify"
 	desc = "Improves the targets ability to receive healing, buffing all healing done on them by 50%<br>Burns undead instead of healing them if you worship the Ten."
-	overlay_state = "astrata"
+	overlay_icon = 'icons/mob/actions/astratamiracles.dmi'
+	action_icon = 'icons/mob/actions/astratamiracles.dmi'
+	overlay_state = "fortify"
 	releasedrain = 30
 	chargedrain = 0
 	chargetime = 0
