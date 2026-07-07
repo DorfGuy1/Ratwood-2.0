@@ -64,6 +64,7 @@
 	if(no_early_release) //This is to stop half-channeled spells from casting as the repeated-casts somehow bypass into this function.
 		if(percentage_progress < 100 && charge_progress < goal)//Conditions for failure: a) not 100% progress, b) charge progress less than goal
 			to_chat(usr, span_warning("[name] was not finished charging! It fizzles."))
+			revert_cast(caller)
 			return FALSE
 	if(perform(list(target), TRUE, user = ranged_ability_user))
 		return TRUE
