@@ -354,7 +354,6 @@
 
 /obj/item/paper/inqslip/examine(mob/user)
 	. = ..()
-	. += span_notice(desc)
 
 /obj/item/paper/inqslip/proc/attemptsign(mob/user, mob/living/carbon/human/M)
 	if(sliptype == 2)
