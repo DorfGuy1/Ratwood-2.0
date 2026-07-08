@@ -352,8 +352,6 @@
 		else
 			to_chat(user, span_notice("This writ has not yet been signed."))
 
-/obj/item/paper/inqslip/examine(mob/user)
-	. = ..()
 
 /obj/item/paper/inqslip/proc/attemptsign(mob/user, mob/living/carbon/human/M)
 	if(sliptype == 2)
