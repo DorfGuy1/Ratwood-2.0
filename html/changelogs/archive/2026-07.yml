@@ -71,3 +71,23 @@
   Xander3359:
   - code_imp: Nukes unused undivided code
   - admin: adds lua scripting
+2026-07-08:
+  Art-gif-dotcom:
+  - rscadd: Heretic spy now can pick whips and gets a roundstart whip
+  PPooch:
+  - bugfix: Desert town palace slaves now get servant-quality traits.
+  Rasengetsu:
+  - rscadd: Added greatweapon straps to Zizo Knight and Squire duo
+  - rscadd: Traded satchel for backpack on Zizo Squire, gave polishing tools to Squire
+  Rhiannahn:
+  - bugfix: janissary standardbearer being unable to use their standard
+  Yuckuza:
+  - rscadd: Shotels are now craftable in iron and steel via an anvil and the smithing
+      skill.
+  - rscadd: Hook swords are now craftable via an anvil and the smithing skill.
+  ophaq:
+  - rscadd: Saddle in the loadout options.
+  zoktiik:
+  - bugfix: Blood Transfer Miracle will no longer cast and then immediately cancel
+      if the caster is in a do_after. The spell will not be put on cooldown, and you
+      will not be charged 50 devotion.
