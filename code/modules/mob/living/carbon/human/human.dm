@@ -115,6 +115,13 @@
 	AddComponent(/datum/component/footstep, footstep_type, 1, 2)
 	GLOB.human_list += src
 	update_tongue_noise_verbs()
+	update_keen_ears_verb()
+
+/mob/living/carbon/human/proc/update_keen_ears_verb()
+	var/verb_path = /mob/living/carbon/human/verb/toggle_keen_ears_ic
+	verbs -= verb_path
+	if(HAS_TRAIT(src, TRAIT_KEENEARS))
+		verbs += verb_path
 
 /mob/living/carbon/human/proc/toggle_keen_ears()
 	if(!HAS_TRAIT(src, TRAIT_KEENEARS))
