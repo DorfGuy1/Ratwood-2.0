@@ -111,10 +111,16 @@
 	. = ..()
 
 	RegisterSignal(src, COMSIG_COMPONENT_CLEAN_ACT, PROC_REF(clean_blood))
+	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_KEENEARS), PROC_REF(on_keen_ears_trait_changed))
+	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_KEENEARS), PROC_REF(on_keen_ears_trait_changed))
 	AddComponent(/datum/component/personal_crafting)
 	AddComponent(/datum/component/footstep, footstep_type, 1, 2)
 	GLOB.human_list += src
 	update_tongue_noise_verbs()
+	update_keen_ears_verb()
+
+/mob/living/carbon/human/proc/on_keen_ears_trait_changed(datum/source, trait)
+	SIGNAL_HANDLER
 	update_keen_ears_verb()
 
 /mob/living/carbon/human/proc/update_keen_ears_verb()
