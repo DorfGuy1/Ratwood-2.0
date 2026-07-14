@@ -92,8 +92,8 @@
 /datum/magic_item/mythic/briarcurse/on_hit(obj/item/source, atom/target, mob/living/user, proximity_flag, click_parameters)
 	.=..()
 	if(isliving(target))
-		var/mob/living/carbon/user = user
-		user.adjustBruteLoss(10)
+		var/mob/living/carbon/H = user
+		H.adjustBruteLoss(10)
 		to_chat(user, span_notice("[source] gouges you with it's sharp edges!"))
 
 /datum/magic_item/mythic/rewind
@@ -144,14 +144,14 @@
 				targeted.adjust_fire_stacks(5)
 				targeted.ignite_mob()
 				to_chat(targeted, span_warning("Chaotic flames engulf you!"))
-		 if(2)
+			if(2)
 				targeted.apply_damage(10, BRUTE)
 				targeted.Knockdown(20)
 				to_chat(targeted, span_warning("Chaotic force slams into you!"))
-		 if(3)
+			if(3)
 				targeted.electrocute_act(12, source, 1)
 				to_chat(targeted, span_warning("Chaotic lightning courses through you!"))
-		 if(4)
+			if(4)
 				targeted.OffBalance(2.5 SECONDS)
 				to_chat(targeted, span_warning("Chaotic energy disrupts your coordination!"))
 			if(5)
