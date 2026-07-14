@@ -161,14 +161,9 @@
 	contains = list(/obj/item/clothing/head/roguetown/chef)
 
 /datum/supply_pack/rogue/Clothing/maidband
-	name = "Maid's Headband"
+	name = "Maid's Headbad"
 	cost = 5
 	contains = list(/obj/item/clothing/head/roguetown/maidband)
-
-/datum/supply_pack/rogue/Clothing/maiddress
-	name = "Maid's Dress"
-	cost = 5
-	contains = list(/obj/item/clothing/suit/roguetown/shirt/dress/maid)
 
 /datum/supply_pack/rogue/Clothing/maidapron
 	name = "Maid's Apron"
